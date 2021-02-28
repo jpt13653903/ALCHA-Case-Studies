@@ -1,13 +1,35 @@
 import "Platform/DE0-Nano-SoC" as Platform;
+//------------------------------------------------------------------------------
 
 import "SubSystems/SystemController";
+//------------------------------------------------------------------------------
+
+import "Library/Registers";
+REGISTERS(SystemController.LightWeightBus) Registers;
+//------------------------------------------------------------------------------
 
 import "SubSystems/SharedResources";
+//------------------------------------------------------------------------------
 
 import "SubSystems/MasterTrigger";
+//------------------------------------------------------------------------------
+
 import "SubSystems/DataStreamer";
+//------------------------------------------------------------------------------
+
 import "SubSystems/WaveformGenerator";
+//------------------------------------------------------------------------------
+
 import "SubSystems/ReceiverAbstraction";
+//------------------------------------------------------------------------------
+
 import "SubSystems/RadarProcessor";
+//------------------------------------------------------------------------------
+
 import "SubSystems/DataLogger";
+//------------------------------------------------------------------------------
+
+Registers.GenerateCpp  ("../Software/Registers/Registers");
+Registers.GenerateLaTeX("../Documentation/Registers");
+//------------------------------------------------------------------------------
 

@@ -1,43 +1,40 @@
-// Target
 'target_vendor = "Altera";
 'target_series = "Cyclone V";
 'target_device = "5CSEMA4U23C6N";
 'target_board  = "DE0-Nano-SoC rev C1";
 
-'standard = "3.3 V";
+'standard = "3.3V";
 //------------------------------------------------------------------------------
 
 group<frequency = 50e6>{
-  input pin<location = "V11", clock_group = "FPGA_CLK1_50"> FPGA_CLK1_50;
-  input pin<location = "Y13", clock_group = "FPGA_CLK2_50"> FPGA_CLK2_50;
-  input pin<location = "E11", clock_group = "FPGA_CLK1_50"> FPGA_CLK3_50;
+  input pin<location = "V11", clock_group = "ClockGroup1"> Clock1;
+  input pin<location = "Y13", clock_group = "ClockGroup2"> Clock2;
+  input pin<location = "E11", clock_group = "ClockGroup1"> Clock3;
 }
 //------------------------------------------------------------------------------
 
-input  pin(4) <location = [ "H5", "H6", "L9", "L10" ]> SW;
-input  pin(2) <location = [ "AH16", "AH17"          ]> KEY;
+input  pin(4) <location = [ "H5", "H6", "L9", "L10" ]> Switches;
+input  pin(2) <location = [ "AH16", "AH17"          ]> Keys;
 output pin(8) <location = [ "AA23", "Y16", "AE26", "AF26",
-                            "V15" , "V16", "AA24", "W15" ]> LED;
+                            "V15" , "V16", "AA24", "W15" ]> LEDs;
 //------------------------------------------------------------------------------
 
-pin(36) <location = [ "AE12", "AF11", "AE11", "AD12", "AF10", "AD11",
-                      "AE9" , "AD10", "AE8" , "AF9" , "AF6" , "AE7" ,
-                      "T11" , "T13" , "AE4" , "AF5" , "AG6" , "AF4" ,
-                      "AH2" , "AH3" , "AG5" , "AH4" , "AH6" , "AH5" ,
-                      "T12" , "T8"  , "U11" , "Y5"  , "Y4"  , "W8"  ,
-                      "AB4" , "Y8"  , "AF8" , "W12" , "AF7" , "V12" ]> GPIO_0;
-//------------------------------------------------------------------------------
-
-pin(36) <location = [ "AC22", "AA18", "AE23", "AD23", "AH18", "AG21",
-                      "AH21", "AH19", "AH22", "AF22", "AD20", "AE24",
-                      "AE20", "AD19", "AF18", "AE19", "AG23", "AH23",
-                      "AF25", "AG24", "AA19", "AH26", "AG18", "AC23",
-                      "AF20", "AG19", "AG20", "AF21", "AE22", "AF23",
-                      "AH24", "AG26", "AH27", "AA15", "AG28", "Y15" ]> GPIO_1;
+pin(36) <location = [ [ "AE12", "AF11", "AE11", "AD12", "AF10", "AD11",
+                        "AE9" , "AD10", "AE8" , "AF9" , "AF6" , "AE7" ,
+                        "T11" , "T13" , "AE4" , "AF5" , "AG6" , "AF4" ,
+                        "AH2" , "AH3" , "AG5" , "AH4" , "AH6" , "AH5" ,
+                        "T12" , "T8"  , "U11" , "Y5"  , "Y4"  , "W8"  ,
+                        "AB4" , "Y8"  , "AF8" , "W12" , "AF7" , "V12" ],
+                      [ "AC22", "AA18", "AE23", "AD23", "AH18", "AG21",
+                        "AH21", "AH19", "AH22", "AF22", "AD20", "AE24",
+                        "AE20", "AD19", "AF18", "AE19", "AG23", "AH23",
+                        "AF25", "AG24", "AA19", "AH26", "AG18", "AC23",
+                        "AF20", "AG19", "AG20", "AF21", "AE22", "AF23",
+                        "AH24", "AG26", "AH27", "AA15", "AG28", "Y15" ] ]> GPIO[2];
 //------------------------------------------------------------------------------
 
 group Arduino{
-  input pin     <location = "AH7"> Reset_n;
+  input pin     <location = "AH7"> nReset;
         pin(16) <location = [ "AG11", "AH9" , "AH12", "AH11",
                               "AG16", "AF15", "AE15", "AF17",
                               "AH8" , "AG8" , "U13" , "U14" ,
@@ -46,46 +43,46 @@ group Arduino{
 //------------------------------------------------------------------------------
 
 group ADC{
-  output pin <location = "U9" > CONVST;
-  output pin <location = "V10"> SCK;
-  output pin <location = "AC4"> SDI;
-  input  pin <location = "AD4"> SDO;
+  output pin <location = "U9" > ConvStart;
+  output pin <location = "V10"> Clock;
+  output pin <location = "AC4"> DataIn;
+  input  pin <location = "AD4"> DataOut;
 }
 //------------------------------------------------------------------------------
 
 group HPS{
   group <frequency = 25e6>{
-    pin <location = "E20"> CLK1_25;
-    pin <location = "D20"> CLK2_25;
+    input pin <location = "E20"> Clock1;
+    input pin <location = "D20"> Clock2;
   }
   //----------------------------------------------------------------------------
 
-  input  pin <location = "J18", hps_gpio = "GPIO54", register_bit = 25> KEY;
+  input  pin <location = "J18", hps_gpio = "GPIO54", register_bit = 25> Key;
   output pin <location = "A20", hps_gpio = "GPIO53", register_bit = 24> LED;
   //----------------------------------------------------------------------------
 
-  group ENET{
-    group TX{
-      output pin    <location =   "J15"                       > CLK;
-      output pin(4) <location = [ "D17", "A15", "J14", "A16" ]> DATA;
-      output pin    <location =   "A12"                       > EN;
+  group Ethernet{
+    group Tx{
+      output pin    <location =   "J15"                       > Clock;
+      output pin(4) <location = [ "D17", "A15", "J14", "A16" ]> Data;
+      output pin    <location =   "A12"                       > Enable;
     }
-    group RX{
-      input pin    <location =   "J12"                      > CLK;
-      input pin(4) <location = [ "A9", "C15", "A11", "A14" ]> DATA;
-      input pin    <location =   "J13"                      > DV;
+    group Rx{
+      input pin    <location =   "J12"                      > Clock;
+      input pin(4) <location = [ "A9", "C15", "A11", "A14" ]> Data;
+      input pin    <location =   "J13"                      > Valid;
     }
-    output pin <location = "B14"> RESET_n;
+    output pin <location = "B14"> nReset;
            pin <location = "E16"> MDIO;
     output pin <location = "A13"> MDC;
-    input  pin <location = "B14"> INT_n;
+    input  pin <location = "B14"> nInterrupt;
   }
   //----------------------------------------------------------------------------
 
   group UART{
-    input  pin <location = "A22"> RX;
-    output pin <location = "B21"> TX;
-    input  pin <location = "C6" > CONV_USB_n;
+    input  pin <location = "A22"> Rx;
+    output pin <location = "B21"> Tx;
+    input  pin <location = "C6" > nConvUSB;
   }
   //----------------------------------------------------------------------------
 
@@ -93,9 +90,9 @@ group HPS{
     pin(15) <location = [ "G23" , "C24" , "D24", "B24",
                           "A24" , "F25" , "F26", "B26",
                           "C26" , "J20" , "J21", "D26",
-                          "E26" , "B28" , "C28"         ]> A;
-    pin( 3) <location = [ "G25" , "H25" , "A27"         ]> BA;
-    pin( 4) <location = [ "AB28", "W28" , "P28", "G28"  ]> DM;
+                          "E26" , "B28" , "C28"        ]> Address;
+    pin( 3) <location = [ "G25" , "H25" , "A27"        ]> Bank;
+    pin( 4) <location = [ "AB28", "W28" , "P28", "G28" ]> DataMask;
     pin(32) <location = [ "AA27", "Y27" , "T24", "R24",
                           "W26" , "AA28", "R25", "R26",
                           "V27" , "R27" , "N27", "N26",
@@ -103,65 +100,64 @@ group HPS{
                           "N28" , "M28" , "M26", "M27",
                           "J28" , "J27" , "L25", "K25",
                           "F28" , "G27" , "K26", "J26",
-                          "D27" , "E28" , "J24", "J25"  ]> DQ;
+                          "D27" , "E28" , "J24", "J25" ]> Data;
 
-    group <standard = "Differential 1.5-V SSTL Class I">{
-      pin    <location =   "N21-N20"                                   > CK;
-      pin(4) <location = [ "U19-T20", "T19-T18", "R19-R18", "R17-R16" ]> DQS;
+    group<standard = "Differential 1.5-V SSTL Class I">{
+      pin    <location =   "N21-N20"                                   > Clock;
+      pin(4) <location = [ "U19-T20", "T19-T18", "R19-R18", "R17-R16" ]> DataStrobe;
     }
 
-    pin <location = "A26"> CAS_n;
-    pin <location = "L28"> CKE;
-    pin <location = "L21"> CS_n;
-    pin <location = "D28"> ODT;
-    pin <location = "A25"> RAS_n;
-    pin <location = "V28"> RESET_n;
-    pin <location = "E25"> WE_n;
+    pin <location = "A26"> nColumnAddressStrobe;
+    pin <location = "L28">  ClockEnable;
+    pin <location = "L21"> nChipSelect;
+    pin <location = "D28">  OnDieTermination;
+    pin <location = "A25"> nRowAddressStrobe;
+    pin <location = "V28"> nReset;
+    pin <location = "E25"> nWriteEnable;
     pin <location = "D25", standard = "1.5 V"> RZQ;
   }
   //----------------------------------------------------------------------------
 
   group SD{
-    output pin    <location =   "B8"                      > CLK;
-    output pin    <location =   "D14"                     > CMD;
-           pin(4) <location = [ "B9", "B11", "B6", "C13" ]> DATA;
+    output pin    <location =   "B8"                      > Clock;
+    output pin    <location =   "D14"                     > Command;
+           pin(4) <location = [ "B9", "B11", "B6", "C13" ]> Data;
   }
   //----------------------------------------------------------------------------
 
   group USB{
-    input  pin    <location =   "G4", frequency = 60e6   > CLKOUT;
-           pin    <location =   "H12"                    > RESET;
+    input  pin    <location =   "G4", frequency = 60e6   > ClockOut;
+           pin    <location =   "H12"                    > Reset;
            pin(8) <location = [ "F4", "C7", "D4", "C8",
-                                "C4", "C9", "F5", "C10" ]> DATA;
-    input  pin    <location =   "E5"                     > DIR;
-    input  pin    <location =   "D5"                     > NXT;
-    output pin    <location =   "C5"                     > STP;
+                                "C4", "C9", "F5", "C10" ]> Data;
+    input  pin    <location =   "E5"                     > Direction;
+    input  pin    <location =   "D5"                     > Next;
+    output pin    <location =   "C5"                     > Step;
   }
   //----------------------------------------------------------------------------
 
-  group I2C0{
-    pin <location = "C18"> SCLK;
-    pin <location = "A19"> SDAT;
+  group I2C{
+    pin <location = "C18"> Clock;
+    pin <location = "A19"> Data;
   }
   //----------------------------------------------------------------------------
 
-  group < i2c_address = [ 0xA6, 0xA7 ],
-          i2c_bus     = I2C0> GSENSOR{
-    input pin <location = "A17"> INT;
+  group<i2c_address = [ 0xA6, 0xA7 ], i2c_bus = I2C> G_Sensor{
+    input pin <location = "A17"> Interrupt;
   }
   //----------------------------------------------------------------------------
 
   group LTC{
     pin <location = "H13"> GPIO;
-    group I2C1{
-      pin <location = "B21"> SCLK;
-      pin <location = "A21"> SDAT;
+    group I2C{
+      pin <location = "B21"> Clock;
+      pin <location = "A21"> Data;
     }
-    group SPIM{
-      output pin <location = "C19"> CLK;
+    group SPI{
+      output pin <location = "C19"> Clock;
       input  pin <location = "B19"> MISO;
       output pin <location = "B16"> MOSI;
-      output pin <location = "C16"> SS;
+      output pin <location = "C16"> SlaveSelect;
     }
   }
 }

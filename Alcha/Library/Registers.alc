@@ -1,0 +1,19 @@
+class Registers{
+  !! The registers constructor should attach itself to the CPU bus
+
+  private{
+    !! The internal data structures required
+  }
+  public{
+    void NewRegion(){
+      !! Create a new region (i.e. 4-bit boundary in "32-bit word" address)
+    }
+    void Attach(){
+      !! Attach the given register to the address space
+    }
+
+    void GenerateCpp  (Filename);
+    void GenerateLaTeX(Filename);
+  }
+}
+
