@@ -1,0 +1,14 @@
+net DelayedReset(net Clk, net Reset, num Delay_ms){
+  num Delay_cycles = round(Clk'frequency * (Delay_ms*1e-3));
+  num N = ceil(log2(Delay_cycles));
+
+  net(N) Count = 0;
+  result = 1;
+
+  rtl(Clk, Reset){
+    if(Count != Delay_cycles) Count++;
+    else DelayedReset = 0;
+  }
+}
+//------------------------------------------------------------------------------
+

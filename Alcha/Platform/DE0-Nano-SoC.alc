@@ -13,10 +13,10 @@ group<frequency = 50e6>{
 }
 //------------------------------------------------------------------------------
 
-input  pin(4) <location = [ "H5", "H6", "L9", "L10" ]> Switches;
-input  pin(2) <location = [ "AH16", "AH17"          ]> Keys;
+input  pin(4) <location = [ "H5", "H6", "L9", "L10" ]> Switches;  // Positive
+input  pin(2) <location = [ "AH16", "AH17"          ]> Keys;      // Negative
 output pin(8) <location = [ "AA23", "Y16", "AE26", "AF26",
-                            "V15" , "V16", "AA24", "W15" ]> LEDs;
+                            "V15" , "V16", "AA24", "W15" ]> LEDs; // Positive
 //------------------------------------------------------------------------------
 
 pin(36) <location = [ [ "AE12", "AF11", "AE11", "AD12", "AF10", "AD11",
