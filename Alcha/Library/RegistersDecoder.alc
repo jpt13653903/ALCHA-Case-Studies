@@ -3,9 +3,9 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
   //----------------------------------------------------------------------------
 
   private{
-    'WrRegisters   = :[ ];
-    'RdRegisters   = :[ ];
-    'LiveRegisters = :[ ];
+    'WrRegisters   = [];
+    'RdRegisters   = [];
+    'LiveRegisters = [];
     num Count = 0;
   }
   //----------------------------------------------------------------------------
@@ -14,17 +14,19 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
     // Register direction as seen by the controller
     void Writeable(Register){
       Register'Address = Count++;
-      'WrRegisters = :[ 'WrRegisters Register ];
+      'WrRegisters.append(Register);
     }
     void ReadOnly(Register){
       Register'Address = Count++;
-      'RdRegisters = :[ 'RdRegisters Register ];
+      'RdRegisters.append(Register);
     }
     void Live(WrRegister, RdRegister, Strobe){
       WrRegister'Address = Count;
       RdRegister'Address = Count;
       Strobe    'Address = Count;
-      'LiveRegisters = :[ 'LiveRegisters [ WrRegister, RdRegister, Strobe ] ];
+      'LiveRegisters.append(< Write  = WrRegister,
+                              Read   = RdRegister,
+                              Strobe = Strobe >);
       Count++;
     }
     //--------------------------------------------------------------------------
@@ -41,7 +43,7 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
             case(Register'Address) ReadData = Register;
           }
           for(Register in 'LiveRegisters){
-            case(Register[1]'Address) ReadData = Register[1];
+            case(Register'Read'Address) ReadData = Register'Read;
           }
         }
         ReadValid = Read;
@@ -52,11 +54,11 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
               case(Register'Address) Register = WriteData;
             }
             for(Register in 'LiveRegisters){
-              case(Register[0]'Address) Register[0] = WriteData;
+              case(Register'Write'Address) Register'Write = WriteData;
             }
           }
           for(Register in 'LiveRegisters){
-            Register[2] = (Address == Register[2]'Address && Write);
+            Register'Strobe = (Address == Register'Strobe'Address && Write);
           }
         }
       }
