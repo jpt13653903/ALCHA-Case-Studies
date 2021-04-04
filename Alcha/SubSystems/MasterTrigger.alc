@@ -1,0 +1,7 @@
+import "Library/TriggerGen"
+
+Registers.NewRegion("Trigger");
+
+TriggerGen(ControlClock, MasterTrigger) MasterTriggerGen;
+alias MasterTrigger = MasterTriggerGen.Output;
+

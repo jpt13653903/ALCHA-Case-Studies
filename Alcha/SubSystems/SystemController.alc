@@ -1,0 +1,72 @@
+import "Library/AvalonInterface"
+import "Library/AvalonMaster"
+//------------------------------------------------------------------------------
+
+!! Create an instance of the SoC system
+//------------------------------------------------------------------------------
+
+class SystemController{
+  private{
+    !! hdl construct with the QSys module
+    hdl(
+      !! Files
+    ) SoC_System_HDL(
+      !! Parameters
+    ){
+      !! Ports
+    }
+  }
+  SoC_System_HDL() SoC_System;
+  //----------------------------------------------------------------------------
+
+  !! Port assignments
+  //----------------------------------------------------------------------------
+
+  // Ref Cyclone V Hard Processor System Technical Reference Manual Table 2-2
+  AvalonMaster(ControllerClock, MasterReset,  64, 0x_780_0000) Bus;
+  AvalonMaster(ControllerClock, MasterReset,  32, 0x___8_0000) LightWeightBus;
+  AvalonSlave (ControllerClock, MasterReset, 128, 0x_400_0000) SDRAM;
+  //----------------------------------------------------------------------------
+
+  Bus'BaseAddress = 0xFF20_0000;
+
+  Bus.Address = SoC_System.Bus_Address;
+  SoC_System.Bus_Address = Bus.WaitRequest;
+
+  Bus.WriteData = SoC_System.Bus_WriteData;
+  Bus.Write     = SoC_System.Bus_Write;
+
+  Bus.Read = SoC_System.Bus_Read;
+  SoC_System.Bus_ReadData  = Bus.ReadData;
+  SoC_System.Bus_ReadValid = Bus.ReadValid;
+  //----------------------------------------------------------------------------
+
+  LightWeightBus'BaseAddress = 0xC000_0000;
+
+  LightWeightBus.Address = SoC_System.LightWeightBus_Address;
+  SoC_System.LightWeightBus_Address = LightWeightBus.WaitRequest;
+
+  LightWeightBus.WriteData = SoC_System.LightWeightBus_WriteData;
+  LightWeightBus.Write     = SoC_System.LightWeightBus_Write;
+
+  LightWeightBus.Read = SoC_System.LightWeightBus_Read;
+  SoC_System.LightWeightBus_ReadData  = LightWeightBus.ReadData;
+  SoC_System.LightWeightBus_ReadValid = LightWeightBus.ReadValid;
+  //----------------------------------------------------------------------------
+
+  SoC_System.SDRAM.Address = SDRAM_Address;
+  SDRAM_Address = Soc_System.SDRAM.WaitRequest;
+
+  SoC_System.SDRAM.WriteData = SDRAM_WriteData;
+  SoC_System.SDRAM.Write     = SDRAM_Write;
+
+  SoC_System.SDRAM.Read = SDRAM_Read;
+  SDRAM_ReadData  = Soc_System.SDRAM.ReadData;
+  SDRAM_ReadValid = Soc_System.SDRAM.ReadValid;
+}
+//------------------------------------------------------------------------------
+
+!! Do all the pin-mapping to the global pins, including all the HPS pins so that
+!! Quartus does not complain about "unassigned pins"
+//------------------------------------------------------------------------------
+

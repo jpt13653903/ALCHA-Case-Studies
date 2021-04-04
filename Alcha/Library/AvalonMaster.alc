@@ -1,0 +1,41 @@
+class AvalonMaster(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){
+  private
+    num Used                  = 0;
+    net ReadingWaitRequest    = 0;
+    net InterfacesWaitRequest = 0;
+  }
+  //----------------------------------------------------------------------------
+
+  ReadData    = 0;
+  WaitRequest = ReadingWaitRequest | InterfacesWaitRequest;
+  //----------------------------------------------------------------------------
+
+  void Attach(AvalonInterface Interface){
+    assert(Interface.Width == Width);
+    assert(Interface.Depth <  Depth - Used);
+
+    Interface.Address = Address - Used;
+    InterfacesWaitRequest |= Interface.WaitRequest;
+
+    net AddressValid = (Address >= Used)
+                    && (Address < (Used + Interface.Depth));
+
+    Interface.WriteData = WriteData;
+    Interface.Write     = AddressValid && Write && !WaitRequest;
+
+    Interface.Read = AddressValid && Read && !WaitRequest;
+    ReadData      |= Interface.ReadValid ? Interface.ReadData : 0;
+    ReadValid     |= Interface.ReadValid;
+
+    Interface'BaseAddress = Used;
+    Used += Interface.Depth;
+  }
+  //--------------------------------------------------------------------------
+
+  rtl(Clock, Reset){
+    if     (Read & !WaitRequest) ReadingWaitRequest = 1;
+    else if(ReadValid)           ReadingWaitRequest = 0;
+  }
+}
+//------------------------------------------------------------------------------
+

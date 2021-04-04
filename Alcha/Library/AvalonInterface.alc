@@ -1,0 +1,15 @@
+class AvalonInterface(num Width, num Depth){
+  num AddressWidth = ceil(log2(Depth));
+
+  net(AddressWidth) Address;
+  net               WaitRequest = 1;
+
+  net(Width)        WriteData;
+  net               Write = 0;
+
+  net               Read = 0;
+  net(Width)        ReadData;
+  net               ReadValid = 0;
+}
+//------------------------------------------------------------------------------
+

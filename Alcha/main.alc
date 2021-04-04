@@ -10,7 +10,7 @@ alias DspClock     = PLL.Output[0];
 alias ControlClock = PLL.Output[1];
 //------------------------------------------------------------------------------
 
-import "Library/DelayedReset"
+import "Library/DelayedReset";
 
 net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
 //------------------------------------------------------------------------------
@@ -18,31 +18,32 @@ net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
 import "SubSystems/SystemController";
 //------------------------------------------------------------------------------
 
-import "Library/Registers";
-REGISTERS(SystemController.LightWeightBus) Registers;
+import "Library/RegistersDecoder";
+RegistersDecoder(SystemController.LightWeightBus) Registers;
 //------------------------------------------------------------------------------
 
-import "SubSystems/SharedResources";
+import "SubSystems/SharedResources" as Shared;
 //------------------------------------------------------------------------------
 
 import "SubSystems/MasterTrigger";
 //------------------------------------------------------------------------------
 
-import "SubSystems/DataStreamer";
+import "SubSystems/WaveformGenerator" as Waveform;
 //------------------------------------------------------------------------------
 
-import "SubSystems/WaveformGenerator";
+import "SubSystems/ReceiverAbstraction" as Receiver;
 //------------------------------------------------------------------------------
 
-import "SubSystems/ReceiverAbstraction";
+import "SubSystems/RadarProcessor" as Processor;
 //------------------------------------------------------------------------------
 
-import "SubSystems/RadarProcessor";
+import "SubSystems/DataStreamer" as Streamer;
 //------------------------------------------------------------------------------
 
-import "SubSystems/DataLogger";
+import "SubSystems/DataLogger" as Logger;
 //------------------------------------------------------------------------------
 
+Registers.GenerateRegs ();
 Registers.GenerateCpp  ("../Software/Registers/Registers");
 Registers.GenerateLaTeX("../Documentation/Registers");
 //------------------------------------------------------------------------------

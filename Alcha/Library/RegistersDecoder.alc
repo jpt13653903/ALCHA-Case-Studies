@@ -1,0 +1,74 @@
+class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
+  Bus.Attach(this);
+  //----------------------------------------------------------------------------
+
+  private{
+    'WrRegisters   = :[ ];
+    'RdRegisters   = :[ ];
+    'LiveRegisters = :[ ];
+    num Count = 0;
+  }
+  //----------------------------------------------------------------------------
+
+  public{
+    // Register direction as seen by the controller
+    void Writeable(Register){
+      Register'Address = Count++;
+      'WrRegisters = :[ 'WrRegisters Register ];
+    }
+    void ReadOnly(Register){
+      Register'Address = Count++;
+      'RdRegisters = :[ 'RdRegisters Register ];
+    }
+    void Live(WrRegister, RdRegister, Strobe){
+      WrRegister'Address = Count;
+      RdRegister'Address = Count;
+      Strobe    'Address = Count;
+      'LiveRegisters = :[ 'LiveRegisters [ WrRegister, RdRegister, Strobe ] ];
+      Count++;
+    }
+    //--------------------------------------------------------------------------
+
+    void GenerateRegs(){
+      rtl(Bus.Clock, Bus.Reset){
+        WaitRequest = 0;
+
+        switch(Address){
+          for(Register in 'WrRegisters){
+            case(Register'Address) ReadData = Register;
+          }
+          for(Register in 'RdRegisters){
+            case(Register'Address) ReadData = Register;
+          }
+          for(Register in 'LiveRegisters){
+            case(Register[1]'Address) ReadData = Register[1];
+          }
+        }
+        ReadValid = Read;
+
+        if(Write){
+          switch(Address){
+            for(Register in 'WrRegisters){
+              case(Register'Address) Register = WriteData;
+            }
+            for(Register in 'LiveRegisters){
+              case(Register[0]'Address) Register[0] = WriteData;
+            }
+          }
+          for(Register in 'LiveRegisters){
+            Register[2] = (Address == Register[2]'Address && Write);
+          }
+        }
+      }
+    }
+
+    void GenerateCpp(string Filename){
+      !! Generate the C++ source and header files
+    }
+    void GenerateLaTeX(string Filename){
+      !! Generate the LaTeX documentation files
+    }
+  }
+}
+//------------------------------------------------------------------------------
+
