@@ -22,7 +22,7 @@ import "Library/RegistersDecoder";
 RegistersDecoder(SystemController.LightWeightBus) Registers;
 //------------------------------------------------------------------------------
 
-import "SubSystems/SharedResources" as Shared;
+import "SubSystems/HardwareControl" as Hardware;
 //------------------------------------------------------------------------------
 
 import "SubSystems/MasterTrigger";

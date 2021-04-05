@@ -63,10 +63,15 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
         }
       }
     }
+    //--------------------------------------------------------------------------
 
     void GenerateCpp(string Filename){
       !! Generate the C++ source and header files
+      !! Base the structure on the Register'identifier attribute, which is the 
+      !! full name of the object (including the full name-space path)
     }
+    //--------------------------------------------------------------------------
+
     void GenerateLaTeX(string Filename){
       !! Generate the LaTeX documentation files
     }

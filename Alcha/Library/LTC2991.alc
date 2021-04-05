@@ -1,0 +1,42 @@
+class LTC2991(
+  net Clock,
+  net Reset,
+  num Baud,
+  num Address,
+      I2C,
+      MutEx
+){
+  input  net      Quiet   = 0;
+  input  net(  5) Enable  = 0b11111;
+  input  net( 32) Control = 0x00_00_00_00;
+  output net      Error   = 0;
+
+  output net(-15) Vcc;
+  output net(-15) V[8];
+  output net(-15) InternalTemp;
+
+  // Making registers is optional -- the user must call this function
+  void MakeRegisters(Registers){
+    Registers.Writeable(Enable );
+    Registers.Writeable(Control);
+
+    Registers.Readonly(Error);
+    Registers.ReadOnly(Vcc);
+    for(n in 0..7) Registers.ReadOnly(V[n]);
+    Registers.ReadOnly(InternalTemp);
+  }
+
+  net SClkIn;
+  net SClkOut;
+  net DataIn;
+  net DataOut;
+
+  SClkIn           =  I2C.SClk.pad;
+  SClkOut          =  I2C.Data.pad;
+  I2C.SClk.enable |= !SClkOut;
+  I2C.Data.enable |= !DataOut;
+
+  !! Implement the abstraction
+}
+//------------------------------------------------------------------------------
+

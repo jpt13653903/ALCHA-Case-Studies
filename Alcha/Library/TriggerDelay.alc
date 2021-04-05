@@ -1,0 +1,30 @@
+class TriggerDelay(net Clock, net Reset, net Trigger){
+  input  net(32) Delay  = 1e-6 * Clock'frequency; // Default to 1 μs
+  input  net(32) Length = 1; // Default to 1 clock cycle
+  output net     Output = 0;
+  //----------------------------------------------------------------------------
+
+  private{
+    net(32) DelayCount  = 0;
+    net(32) LengthCount = 0;
+    net     Trigger_1;
+  }
+  //----------------------------------------------------------------------------
+
+  rtl(Clock, Reset){
+    Trigger_1 = Trigger;
+    if( :(Trigger_1, Trigger) == 0b01) DelayCount = Delay;
+    else if(DelayCount > 0)            DelayCount--;
+
+    if(Output){
+      if(LengthCount == 1) Output = 0;
+      LengthCount--;
+
+    }else if(DelayCount == 1){
+      Output      = 1;
+      LengthCount = Length;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

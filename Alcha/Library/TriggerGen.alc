@@ -1,6 +1,5 @@
 class TriggerGen(net Clock, net Reset){
   net(32) Period = 1e-3 * Clock'frequency; // Default to 1 ms
-  Registers.Writable(Period);
 
   net     Output = 0;
   net(32) Count  = 0;
