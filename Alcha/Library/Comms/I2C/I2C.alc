@@ -1,0 +1,87 @@
+class I2C(net Clk, net Reset, num Baud_kHz = 50){
+  input  net Quiet = 0;
+  output net Error = 0;
+  //----------------------------------------------------------------------------
+
+  private{
+    num Baud_Cycles = round(Clk'frequency / (Baud_kHz*3));
+    num Baud_N      = ceil(log2(Baud_Count));
+    net(Baud_N) Baud_Count;
+
+    rtl(Clk){
+      if(Baud_Count) Baud_Count--;
+      else           Baud_Count = Baud_Cycles-1;
+    }
+    net Baud_Trigger = ~|Baud_Count;
+
+    net ClkIn , ClkOut  = 1;
+    net DataIn, DataOut = 1;
+  }
+  //----------------------------------------------------------------------------
+
+  void ConnectBus(pin Clock, pin Data){
+    Clock.enable |= ~ClkOut;
+    Data .enable |= ~DataOut;
+    rtl(Clk){
+      ClkIn  = Clock.pad;
+      DataIn = Data .pad;
+    }
+  }
+  //----------------------------------------------------------------------------
+
+  net(8) Transaction(
+    net(8) TxData,
+    num    Start = false,
+    num    R_nW  = false,
+    num    Ack   = true,
+    num    Stop  = false
+  ){
+    net(8) Data;
+    // If ClkIn != ClkOut it means that the slave is clock-stretching
+    fsm(Clk, Reset, Baud_Trigger & (ClkIn == ClkOut)){
+      // Start / Restart
+      Data = TxData,
+      if(Start | ClkOut){
+        if(!ClkOut & !DataOut) DataOut = 1;
+        if(!ClkOut &  DataOut) ClkOut  = 1;
+        if( ClkOut &  DataOut) DataOut = 0;
+        if( ClkOut & !DataOut) ClkOut  = 0;
+      }
+
+      // Transfer Data
+      for(n in 0..7){
+        if(R_nW) DataOut = 1;
+        else     DataOut = Data[7];
+        ClkOut = 1;
+        ClkOut = 0, Data = :(Data[6..0], DataIn);
+      }
+
+      // Ack
+      if(R_nW){
+        result  = Data, DataOut = !Ack;
+        ClkOut  = 1;
+        ClkOut  = 0;
+      }else{
+        DataOut = 1;
+        ClkOut  = 1;
+        ClkOut  = 0,
+        if(DataIn != Ack){
+          Error = 1,
+          return;
+        }else{
+          Error = 0;
+        }
+      }
+
+      // Stop
+      if(Stop){
+        if( ClkOut &  DataOut) ClkOut  = 0;
+        if(!ClkOut &  DataOut) DataOut = 0;
+        if(!ClkOut & !DataOut) ClkOut  = 1;
+        if( ClkOut & !DataOut) DataOut = 1;
+      }
+    }
+  }
+}
+//------------------------------------------------------------------------------
+
