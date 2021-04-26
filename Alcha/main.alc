@@ -1,7 +1,7 @@
 import "Platform/DE0-Nano-SoC" as Platform;
 //------------------------------------------------------------------------------
 
-import "Library/PLL_CycloneV";
+import "Library/Clocking_and_Reset/PLL_CycloneV";
 
 net ResetKey = ~Platform.Keys[0];
 
@@ -10,7 +10,7 @@ alias DspClock     = PLL.Output[0];
 alias ControlClock = PLL.Output[1];
 //------------------------------------------------------------------------------
 
-import "Library/DelayedReset";
+import "Library/Clocking_and_Reset/DelayedReset";
 
 net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
 //------------------------------------------------------------------------------
@@ -18,8 +18,17 @@ net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
 import "SubSystems/SystemController";
 //------------------------------------------------------------------------------
 
-import "Library/RegistersDecoder";
+import "Library/Interfaces/RegistersDecoder";
 RegistersDecoder(SystemController.LightWeightBus) Registers;
+//------------------------------------------------------------------------------
+
+import "Library/Misc/FirmwareVersion";
+FirmwareVersion(1, 0) Firmware;
+
+Registers.ReadOnly(Firmware.Version);
+Registers.ReadOnly(Firmware.Date   );
+Registers.ReadOnly(Firmware.Time   );
+Registers.ReadOnly(Firmware.GitHash);
 //------------------------------------------------------------------------------
 
 import "SubSystems/HardwareControl" as Hardware;

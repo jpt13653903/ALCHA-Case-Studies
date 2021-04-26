@@ -7,7 +7,7 @@ net DelayedReset(net Clk, net Reset, num Delay_ms){
 
   rtl(Clk, Reset){
     if(Count != Delay_cycles) Count++;
-    else DelayedReset = 0;
+    else result = 0;
   }
 }
 //------------------------------------------------------------------------------
