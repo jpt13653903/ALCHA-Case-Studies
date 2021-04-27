@@ -1,0 +1,53 @@
+class ADS7056(net Clk, net Reset){
+  // Maximum SPI clock is 60 MHz, and gives a 2.5 MSps sampling rate
+  assert(Clk'frequency <= 120e6);
+  //----------------------------------------------------------------------------
+
+  private{
+    net nCS  = 1;
+    net SClk = 0;
+    net Data;
+
+    net(14) Shift;
+    net( 6) Count = 0;
+  }
+  //----------------------------------------------------------------------------
+
+  output group Output{
+    net(14) Data;
+    net     Valid = 0;
+  }
+  //----------------------------------------------------------------------------
+
+  void ConnectPins(pin nCS, pin SClk, pin SDO){
+    nCS  = this.nCS;
+    SClk = this.SClk;
+    Data = SDO;
+
+    !! Assign the device-specific timing parameters
+  }
+  //----------------------------------------------------------------------------
+
+  rtl(Clk, Reset){
+    if(Count == 47) Count = 0;
+    else            Count++;
+
+    switch(Count){
+      case(0    ) nCS  = 0;
+      case(1..36) SClk = ~SClk;
+      case(37   ) nCS  = 1;
+      default     SClk = 0; // Reset in case something went wrong
+    }
+
+    if(SClk == 0) Shift = :(Shift[13..0], Data);
+
+    if(Count == 32){
+      Output.Data  = Shift;
+      Output.Valid = 1;
+    }else{
+      Output.Valid = 0;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

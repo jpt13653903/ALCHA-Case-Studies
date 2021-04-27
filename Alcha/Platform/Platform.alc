@@ -1,0 +1,60 @@
+import "Library/Platforms/DE0-Nano-SoC" as Platform;
+//------------------------------------------------------------------------------
+
+alias HPS_Pins  = Platform.HPS;
+alias LEDs      = Platform.LEDs;
+alias DipSwitch = Platform.Switches;
+//------------------------------------------------------------------------------
+
+group Synth{ // ADF4159
+  group SPI{
+    alias SClk  = Platform.Arduino.IO[0];
+    alias Data  = Platform.Arduino.IO[1];
+    alias Latch = Platform.Arduino.IO[2];
+  }
+  alias Trigger = Platform.Arduino.IO[3];
+  alias MuxOut  = Platform.Arduino.IO[4];
+}
+//------------------------------------------------------------------------------
+
+group ADC{ // ADS7056
+  alias nCS  = Platform.Arduino.IO[5];
+  alias SClk = Platform.Arduino.IO[6];
+  alias Data = Platform.Arduino.IO[7];
+
+  !! Assign the PCB-specific timing parameters
+}
+//------------------------------------------------------------------------------
+
+alias TxEnable = Platform.Arduino.IO[8];
+//------------------------------------------------------------------------------
+
+net(5) Debug;
+Platform.Arduino.IO[ 9] = Debug[0];
+Platform.Arduino.IO[10] = Debug[1];
+Platform.Arduino.IO[11] = Debug[2];
+Platform.Arduino.IO[12] = Debug[3];
+Platform.Arduino.IO[13] = Debug[4];
+//------------------------------------------------------------------------------
+
+group I2C{ // LTC2991
+  alias SClk = Platform.Arduino.IO[15];
+  alias Data = Platform.Arduino.IO[14];
+}
+//------------------------------------------------------------------------------
+
+net ResetKey = ~Platform.Keys[0];
+//------------------------------------------------------------------------------
+
+import "Library/Clocking_and_Reset/PLL_CycloneV";
+
+PLL_CycloneV(Platform.Clock1, ResetKey, [120, 2.5]) PLL;
+alias DspClock     = PLL.Output[0];
+alias ControlClock = PLL.Output[1];
+//------------------------------------------------------------------------------
+
+import "Library/Clocking_and_Reset/DelayedReset";
+
+net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
+//------------------------------------------------------------------------------
+

@@ -1,18 +1,4 @@
-import "Platform/DE0-Nano-SoC" as Platform;
-//------------------------------------------------------------------------------
-
-import "Library/Clocking_and_Reset/PLL_CycloneV";
-
-net ResetKey = ~Platform.Keys[0];
-
-PLL_CycloneV(Platform.Clock1, ResetKey, [100, 6.25]) PLL;
-alias DspClock     = PLL.Output[0];
-alias ControlClock = PLL.Output[1];
-//------------------------------------------------------------------------------
-
-import "Library/Clocking_and_Reset/DelayedReset";
-
-net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
+import "Platform/Platform";
 //------------------------------------------------------------------------------
 
 import "SubSystems/SystemController";

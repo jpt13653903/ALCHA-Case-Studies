@@ -1,0 +1,20 @@
+import "Library/Comms/I2C/I2C"
+//------------------------------------------------------------------------------
+
+class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50): I2C(Clk, Reset, Baud_kHz){
+  input net( 5) EnableReg;   // Register  01
+  input net(32) ControlRegs; // Registers 09..06
+
+  output net(16) V[8];
+  output net(16) Temp;
+  output net(16) Vcc;
+
+  void AttachMutEx(){
+    !! Implement
+  }
+
+  fsm(Clk, Reset){
+    !! Implement using the Transaction function in I2C base class
+  }
+}
+//------------------------------------------------------------------------------

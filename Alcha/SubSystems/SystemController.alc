@@ -1,5 +1,5 @@
-import "Library/AvalonInterface"
-import "Library/AvalonMaster"
+import "Library/Interfaces/AvalonInterface"
+import "Library/Interfaces/AvalonMaster"
 //------------------------------------------------------------------------------
 
 !! Create an instance of the SoC system
