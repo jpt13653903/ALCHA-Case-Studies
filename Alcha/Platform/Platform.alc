@@ -40,6 +40,14 @@ Platform.Arduino.IO[13] = Debug[4];
 group I2C{ // LTC2991
   alias SClk = Platform.Arduino.IO[15];
   alias Data = Platform.Arduino.IO[14];
+
+  SClk'pullup = true;
+  SClk.driver = 0;
+  SClk.enable = 0;
+
+  Data'pullup = true;
+  Data.driver = 0;
+  Data.enable = 0;
 }
 //------------------------------------------------------------------------------
 

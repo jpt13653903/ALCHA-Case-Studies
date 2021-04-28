@@ -1,0 +1,36 @@
+class MutEx(net Clk, net Reset){
+  'Modules = [];
+  //----------------------------------------------------------------------------
+
+  void Add(Module){
+    'Modules.append(Module);
+  }
+  //----------------------------------------------------------------------------
+
+  void Generate(){
+    num N = 'Modules'length;
+    assert(N > 0);
+
+    net(N) Request;
+    net(N) Grant  = 0;
+    net(N) Device = 1;
+
+    rtl(Clk, Reset){
+      if(Request & Device){
+        Grant  = Device;
+      }else{
+        Grant  = 0;
+        Device = :(Device[N-2..0], Device[N-1]);
+      }
+    }
+
+    // Cannot assign directly, because one is an array of objects
+    // and the other a vector of bits
+    for(n in 0..(N-1)){
+      Request[n] = 'Modules[n].MutEx.Request;
+      'Modules[n].MutEx.Grant = Grant[n];
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

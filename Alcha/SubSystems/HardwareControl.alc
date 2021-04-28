@@ -1,38 +1,39 @@
 // Stuff like BIM and BIT, RF switches, etc.
 
-import "Library/TriggerDelay"
-import "Library/LTC2991"
+import "Library/Misc/MutEx"
+import "Library/Timing/TriggerDelay"
+import "Library/Peripherals/ADC_and_BIM/LTC2991"
 //------------------------------------------------------------------------------
 
-alias PA_Enable = GPIO[0][10];
-
-group I2C{
-  alias SClk = GPIO[0][11];
-  alias Data = GPIO[0][12];
-
-  SClk'pullup = true;
-  SClk.driver = 0;
-  SClk.enable = 0;
-
-  Data'pullup = true;
-  Data.driver = 0;
-  Data.enable = 0;
-}
+MutEx(ControlClock, MasterReset) I2C_MutEx;
 //------------------------------------------------------------------------------
 
-LTC2991(ControlClock, MasterReset, 10e3, 0b000, I2C, MutEx) TxBIM;
-TxBIM.Quiet = !PA_Enable;
+LTC2991(ControlClock, MasterReset, 0b000) TxBIM;
+
+TxBIM.Quiet = !TxEnable;
 TxBIM.MakeRegisters(Registers);
+TxBIM.ConnectBus(I2C.SClk, I2C.Data);
+
+I2C_MutEx.Add(TxBIM);
 //------------------------------------------------------------------------------
 
-LTC2991(ControlClock, MasterReset, 10e3, 0b001, I2C, MutEx) RxBIM;
-RxBIM.Quiet = !PA_Enable;
+LTC2991(ControlClock, MasterReset, 0b001) RxBIM;
+
+RxBIM.Quiet = !TxEnable;
 RxBIM.MakeRegisters(Registers);
+RxBIM.ConnectBus(I2C.SClk, I2C.Data);
+
+I2C_MutEx.Add(RxBIM);
 //------------------------------------------------------------------------------
 
 TriggerDelay(ControlClock, MasterReset, MasterTrigger) TriggerDelay_PA;
+
 Registers.ReadOnly(TriggerDelay_PA.Delay );
 Registers.ReadOnly(TriggerDelay_PA.Length);
-PA_Enable = TriggerDelay_PA.Output;
+
+TxEnable = TriggerDelay_PA.Output;
+//------------------------------------------------------------------------------
+
+I2C_MutEx.Generate();
 //------------------------------------------------------------------------------
 
