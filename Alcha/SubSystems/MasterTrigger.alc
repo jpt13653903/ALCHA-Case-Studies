@@ -1,6 +1,8 @@
 import "Library/TriggerGen"
+//------------------------------------------------------------------------------
 
 TriggerGen(ControlClock, MasterTrigger) MasterTriggerGen;
 Registers.Writable(MasterTriggerGen.Period);
 alias MasterTrigger = MasterTriggerGen.Output;
+//------------------------------------------------------------------------------
 

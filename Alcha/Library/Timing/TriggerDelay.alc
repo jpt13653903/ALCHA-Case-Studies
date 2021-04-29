@@ -1,4 +1,5 @@
 class TriggerDelay(net Clock, net Reset, net Trigger){
+  input  net     Enable = 1;
   input  net(32) Delay  = 1e-6 * Clock'frequency; // Default to 1 μs
   input  net(32) Length = 1; // Default to 1 clock cycle
   output net     Output = 0;
@@ -21,7 +22,7 @@ class TriggerDelay(net Clock, net Reset, net Trigger){
       LengthCount--;
 
     }else if(DelayCount == 1){
-      Output      = 1;
+      Output      = Enable;
       LengthCount = Length;
     }
   }

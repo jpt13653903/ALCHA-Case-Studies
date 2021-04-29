@@ -17,10 +17,10 @@ Registers.ReadOnly(Firmware.Time   );
 Registers.ReadOnly(Firmware.GitHash);
 //------------------------------------------------------------------------------
 
-import "SubSystems/HardwareControl" as Hardware;
+import "SubSystems/MasterTrigger";
 //------------------------------------------------------------------------------
 
-import "SubSystems/MasterTrigger";
+import "SubSystems/HardwareControl" as Hardware;
 //------------------------------------------------------------------------------
 
 import "SubSystems/WaveformGenerator" as Waveform;
@@ -33,9 +33,6 @@ import "SubSystems/RadarProcessor" as Processor;
 //------------------------------------------------------------------------------
 
 import "SubSystems/DataStreamer" as Streamer;
-//------------------------------------------------------------------------------
-
-import "SubSystems/DataLogger" as Logger;
 //------------------------------------------------------------------------------
 
 Registers.GenerateRegs ();

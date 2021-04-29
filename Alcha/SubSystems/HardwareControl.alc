@@ -28,8 +28,9 @@ I2C_MutEx.Add(RxBIM);
 
 TriggerDelay(ControlClock, MasterReset, MasterTrigger) TriggerDelay_PA;
 
-Registers.ReadOnly(TriggerDelay_PA.Delay );
-Registers.ReadOnly(TriggerDelay_PA.Length);
+Registers.Writeable(TriggerDelay_PA.Enable);
+Registers.Writeable(TriggerDelay_PA.Delay );
+Registers.Writeable(TriggerDelay_PA.Length);
 
 TxEnable = TriggerDelay_PA.Output;
 //------------------------------------------------------------------------------
