@@ -1,45 +1,45 @@
-import "Library/Platforms/DE0-Nano-SoC" as Platform;
+import "Library/Platforms/DE0-Nano-SoC" as DE0;
 //------------------------------------------------------------------------------
 
-alias HPS_Pins  = Platform.HPS;
-alias LEDs      = Platform.LEDs;
-alias DipSwitch = Platform.Switches;
+alias HPS_Pins  = DE0.HPS;
+alias LEDs      = DE0.LEDs;
+alias DipSwitch = DE0.Switches;
 //------------------------------------------------------------------------------
 
 group Synth{ // ADF4159
   group SPI{
-    alias SClk  = Platform.Arduino.IO[0];
-    alias Data  = Platform.Arduino.IO[1];
-    alias Latch = Platform.Arduino.IO[2];
+    alias SClk  = DE0.Arduino.IO[0];
+    alias Data  = DE0.Arduino.IO[1];
+    alias Latch = DE0.Arduino.IO[2];
   }
-  alias Trigger = Platform.Arduino.IO[3];
-  alias MuxOut  = Platform.Arduino.IO[4];
+  alias Trigger = DE0.Arduino.IO[3];
+  alias MuxOut  = DE0.Arduino.IO[4];
 }
 //------------------------------------------------------------------------------
 
 group ADC{ // ADS7056
-  alias nCS  = Platform.Arduino.IO[5];
-  alias SClk = Platform.Arduino.IO[6];
-  alias Data = Platform.Arduino.IO[7];
+  alias nCS  = DE0.Arduino.IO[5];
+  alias SClk = DE0.Arduino.IO[6];
+  alias Data = DE0.Arduino.IO[7];
 
   !! Assign the PCB-specific timing parameters
 }
 //------------------------------------------------------------------------------
 
-alias TxEnable = Platform.Arduino.IO[8];
+alias TxEnable = DE0.Arduino.IO[8];
 //------------------------------------------------------------------------------
 
 net(5) Debug;
-Platform.Arduino.IO[ 9] = Debug[0];
-Platform.Arduino.IO[10] = Debug[1];
-Platform.Arduino.IO[11] = Debug[2];
-Platform.Arduino.IO[12] = Debug[3];
-Platform.Arduino.IO[13] = Debug[4];
+DE0.Arduino.IO[ 9] = Debug[0];
+DE0.Arduino.IO[10] = Debug[1];
+DE0.Arduino.IO[11] = Debug[2];
+DE0.Arduino.IO[12] = Debug[3];
+DE0.Arduino.IO[13] = Debug[4];
 //------------------------------------------------------------------------------
 
 group I2C{ // LTC2991
-  alias SClk = Platform.Arduino.IO[15];
-  alias Data = Platform.Arduino.IO[14];
+  alias SClk = DE0.Arduino.IO[15];
+  alias Data = DE0.Arduino.IO[14];
 
   SClk'pullup = true;
   SClk.driver = 0;
@@ -51,12 +51,12 @@ group I2C{ // LTC2991
 }
 //------------------------------------------------------------------------------
 
-net ResetKey = ~Platform.Keys[0];
+net ResetKey = ~DE0.Keys[0];
 //------------------------------------------------------------------------------
 
 import "Library/Clocking_and_Reset/PLL_CycloneV";
 
-PLL_CycloneV(Platform.Clock1, ResetKey, [120, 2.5]) PLL;
+PLL_CycloneV(DE0.Clock1, ResetKey, [120, 2.5]) PLL;
 alias DspClock     = PLL.Output[0];
 alias ControlClock = PLL.Output[1];
 //------------------------------------------------------------------------------

@@ -1,3 +1,6 @@
+import "Library/Interfaces/AvalonInterface"
+//------------------------------------------------------------------------------
+
 class AvalonMaster(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){
   private
     num Used                  = 0;

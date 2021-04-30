@@ -1,0 +1,8 @@
+import "Library/Interfaces/AvalonInterface"
+//------------------------------------------------------------------------------
+
+class AvalonSlave(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){
+  !! Implement this (loosely based on AvalonMaster
+}
+//------------------------------------------------------------------------------
+

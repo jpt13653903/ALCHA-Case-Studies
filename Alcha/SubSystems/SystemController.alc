@@ -1,8 +1,4 @@
-import "Library/Interfaces/AvalonInterface"
 import "Library/Interfaces/AvalonMaster"
-//------------------------------------------------------------------------------
-
-!! Create an instance of the SoC system
 //------------------------------------------------------------------------------
 
 class SystemController{
@@ -54,16 +50,19 @@ class SystemController{
   SoC_System.LightWeightBus_ReadValid = LightWeightBus.ReadValid;
   //----------------------------------------------------------------------------
 
-  SoC_System.SDRAM.Address = SDRAM_Address;
-  SDRAM_Address = Soc_System.SDRAM.WaitRequest;
+  SoC_System.SDRAM.Address = SDRAM.Address;
+  SDRAM.Address = Soc_System.SDRAM.WaitRequest;
 
-  SoC_System.SDRAM.WriteData = SDRAM_WriteData;
-  SoC_System.SDRAM.Write     = SDRAM_Write;
+  SoC_System.SDRAM.WriteData = SDRAM.WriteData;
+  SoC_System.SDRAM.Write     = SDRAM.Write;
 
-  SoC_System.SDRAM.Read = SDRAM_Read;
-  SDRAM_ReadData  = Soc_System.SDRAM.ReadData;
-  SDRAM_ReadValid = Soc_System.SDRAM.ReadValid;
+  SoC_System.SDRAM.Read = SDRAM.Read;
+  SDRAM.ReadData  = Soc_System.SDRAM.ReadData;
+  SDRAM.ReadValid = Soc_System.SDRAM.ReadValid;
 }
+//------------------------------------------------------------------------------
+
+!! Create an instance of the SoC system
 //------------------------------------------------------------------------------
 
 !! Do all the pin-mapping to the global pins, including all the HPS pins so that

@@ -9,7 +9,7 @@ RegistersDecoder(SystemController.LightWeightBus) Registers;
 //------------------------------------------------------------------------------
 
 import "Library/Misc/FirmwareVersion";
-FirmwareVersion(1, 0) Firmware;
+FirmwareVersion(1,0) Firmware;
 
 Registers.ReadOnly(Firmware.Version);
 Registers.ReadOnly(Firmware.Date   );
