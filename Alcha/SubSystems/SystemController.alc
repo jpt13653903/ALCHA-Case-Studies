@@ -1,71 +1,277 @@
 import "Library/Interfaces/AvalonMaster"
+import "Library/Interfaces/AvalonSlave"
 //------------------------------------------------------------------------------
 
-class SystemController{
-  private{
-    !! hdl construct with the QSys module
-    hdl(
-      !! Files
-    ) SoC_System_HDL(
-      !! Parameters
-    ){
-      !! Ports
+class SystemController_Class{
+  private{ // SoC System Instance
+    hdl("../Verilog/SoC_System/SoC_System.qsys") SoC_System_HDL(){
+      output net      hps_clk_out_clk;
+      output net      hps_reset_out_reset;
+
+      input  net      hps_cold_reset_req_reset_n;
+      input  net      hps_warm_reset_req_reset_n;
+      input  net      hps_debug_reset_req_reset_n;
+
+      output net      hps_io_hps_io_emac1_inst_TX_CLK;
+      output net      hps_io_hps_io_emac1_inst_TXD0;
+      output net      hps_io_hps_io_emac1_inst_TXD1;
+      output net      hps_io_hps_io_emac1_inst_TXD2;
+      output net      hps_io_hps_io_emac1_inst_TXD3;
+      input  net      hps_io_hps_io_emac1_inst_RXD0;
+             net      hps_io_hps_io_emac1_inst_MDIO;
+      output net      hps_io_hps_io_emac1_inst_MDC;
+      input  net      hps_io_hps_io_emac1_inst_RX_CTL;
+      output net      hps_io_hps_io_emac1_inst_TX_CTL;
+      input  net      hps_io_hps_io_emac1_inst_RX_CLK;
+      input  net      hps_io_hps_io_emac1_inst_RXD1;
+      input  net      hps_io_hps_io_emac1_inst_RXD2;
+      input  net      hps_io_hps_io_emac1_inst_RXD3;
+
+             net      hps_io_hps_io_sdio_inst_CMD;
+             net      hps_io_hps_io_sdio_inst_D0;
+             net      hps_io_hps_io_sdio_inst_D1;
+      output net      hps_io_hps_io_sdio_inst_CLK;
+             net      hps_io_hps_io_sdio_inst_D2;
+             net      hps_io_hps_io_sdio_inst_D3;
+
+             net      hps_io_hps_io_usb1_inst_D0;
+             net      hps_io_hps_io_usb1_inst_D1;
+             net      hps_io_hps_io_usb1_inst_D2;
+             net      hps_io_hps_io_usb1_inst_D3;
+             net      hps_io_hps_io_usb1_inst_D4;
+             net      hps_io_hps_io_usb1_inst_D5;
+             net      hps_io_hps_io_usb1_inst_D6;
+             net      hps_io_hps_io_usb1_inst_D7;
+      input  net      hps_io_hps_io_usb1_inst_CLK;
+      output net      hps_io_hps_io_usb1_inst_STP;
+      input  net      hps_io_hps_io_usb1_inst_DIR;
+      input  net      hps_io_hps_io_usb1_inst_NXT;
+
+      output net      hps_io_hps_io_spim1_inst_CLK;
+      output net      hps_io_hps_io_spim1_inst_MOSI;
+      input  net      hps_io_hps_io_spim1_inst_MISO;
+      output net      hps_io_hps_io_spim1_inst_SS0;
+
+      input  net      hps_io_hps_io_uart0_inst_RX;
+      output net      hps_io_hps_io_uart0_inst_TX;
+
+             net      hps_io_hps_io_i2c0_inst_SDA;
+             net      hps_io_hps_io_i2c0_inst_SCL;
+
+             net      hps_io_hps_io_i2c1_inst_SDA;
+             net      hps_io_hps_io_i2c1_inst_SCL;
+
+             net      hps_io_hps_io_gpio_inst_GPIO09;
+             net      hps_io_hps_io_gpio_inst_GPIO35;
+             net      hps_io_hps_io_gpio_inst_GPIO40;
+             net      hps_io_hps_io_gpio_inst_GPIO53;
+             net      hps_io_hps_io_gpio_inst_GPIO54;
+             net      hps_io_hps_io_gpio_inst_GPIO61;
+
+      output net( 15) memory_mem_a;
+      output net(  3) memory_mem_ba;
+      output net      memory_mem_ck;
+      output net      memory_mem_ck_n;
+      output net      memory_mem_cke;
+      output net      memory_mem_cs_n;
+      output net      memory_mem_ras_n;
+      output net      memory_mem_cas_n;
+      output net      memory_mem_we_n;
+      output net      memory_mem_reset_n;
+             net( 32) memory_mem_dq;
+             net(  4) memory_mem_dqs;
+             net(  4) memory_mem_dqs_n;
+      output net      memory_mem_odt;
+      output net(  4) memory_mem_dm;
+      input  net      memory_oct_rzqin;
+
+      input  net      light_weight_bus_clk_clk;
+      input  net      light_weight_bus_reset_reset;
+      output net( 12) light_weight_bus_address;
+      output net(  4) light_weight_bus_byteenable;
+      output net(  1) light_weight_bus_burstcount;
+      input  net      light_weight_bus_waitrequest;
+      output net( 32) light_weight_bus_writedata;
+      output net      light_weight_bus_write;
+      output net      light_weight_bus_read;
+      input  net( 32) light_weight_bus_readdata;
+      input  net      light_weight_bus_readdatavalid;
+      output net      light_weight_bus_debugaccess;
+
+      input  net( 27) sdram_address;
+      input  net( 32) sdram_byteenable;
+      input  net(  8) sdram_burstcount;
+      output net      sdram_waitrequest;
+      input  net(256) sdram_writedata;
+      input  net      sdram_write;
+      input  net      sdram_read;
+      output net(256) sdram_readdata;
+      output net      sdram_readdatavalid;
+
+      input  net      streambuffer_clk_clk;
+      input  net      streambuffer_clken;
+      input  net      streambuffer_reset_reset;
+      input  net      streambuffer_chipselect;
+      input  net( 13) streambuffer_address;
+      input  net(  2) streambuffer_byteenable;
+      input  net( 16) streambuffer_writedata;
+      input  net      streambuffer_write;
+      output net( 16) streambuffer_readdata;
     }
+    SoC_System_HDL() SoC_System;
   }
-  SoC_System_HDL() SoC_System;
   //----------------------------------------------------------------------------
 
-  !! Port assignments
+  private{ // HPS Pins
+    HPS_Pins.Ethernet.Tx.Clock  .hdl_map(SoC_System.hps_io_hps_io_emac1_inst_TX_CLK);
+    HPS_Pins.Ethernet.Tx.Enable .hdl_map(SoC_System.hps_io_hps_io_emac1_inst_TX_CTL);
+    HPS_Pins.Ethernet.Tx.Data[0].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_TXD0  );
+    HPS_Pins.Ethernet.Tx.Data[1].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_TXD1  );
+    HPS_Pins.Ethernet.Tx.Data[2].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_TXD2  );
+    HPS_Pins.Ethernet.Tx.Data[3].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_TXD3  );
+
+    HPS_Pins.Ethernet.Rx.Clock  .hdl_map(SoC_System.hps_io_hps_io_emac1_inst_RX_CLK);
+    HPS_Pins.Ethernet.Rx.Valid  .hdl_map(SoC_System.hps_io_hps_io_emac1_inst_RX_CTL);
+    HPS_Pins.Ethernet.Rx.Data[0].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_RXD0  );
+    HPS_Pins.Ethernet.Rx.Data[1].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_RXD1  );
+    HPS_Pins.Ethernet.Rx.Data[2].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_RXD2  );
+    HPS_Pins.Ethernet.Rx.Data[3].hdl_map(SoC_System.hps_io_hps_io_emac1_inst_RXD3  );
+
+    HPS_Pins.Ethernet.MDC       .hdl_map(SoC_System.hps_io_hps_io_emac1_inst_MDC   );
+    HPS_Pins.Ethernet.MDIO      .hdl_map(SoC_System.hps_io_hps_io_emac1_inst_MDIO  );
+
+    HPS_Pins.Ethernet.nInterrupt.hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO35 );
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.SD.Clock  .hdl_map(SoC_System.hps_io_hps_io_sdio_inst_CLK);
+    HPS_Pins.SD.Command.hdl_map(SoC_System.hps_io_hps_io_sdio_inst_CMD);
+    HPS_Pins.SD.Data[0].hdl_map(SoC_System.hps_io_hps_io_sdio_inst_D0 );
+    HPS_Pins.SD.Data[1].hdl_map(SoC_System.hps_io_hps_io_sdio_inst_D1 );
+    HPS_Pins.SD.Data[2].hdl_map(SoC_System.hps_io_hps_io_sdio_inst_D2 );
+    HPS_Pins.SD.Data[3].hdl_map(SoC_System.hps_io_hps_io_sdio_inst_D3 );
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.USB.Data[0]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D0 );
+    HPS_Pins.USB.Data[1]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D1 );
+    HPS_Pins.USB.Data[2]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D2 );
+    HPS_Pins.USB.Data[3]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D3 );
+    HPS_Pins.USB.Data[4]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D4 );
+    HPS_Pins.USB.Data[5]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D5 );
+    HPS_Pins.USB.Data[6]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D6 );
+    HPS_Pins.USB.Data[7]  .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_D7 );
+    HPS_Pins.USB.ClockOut .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_CLK);
+    HPS_Pins.USB.Step     .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_STP);
+    HPS_Pins.USB.Direction.hdl_map(SoC_System.hps_io_hps_io_usb1_inst_DIR);
+    HPS_Pins.USB.Next     .hdl_map(SoC_System.hps_io_hps_io_usb1_inst_NXT);
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.LTC.GPIO           .hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO40);
+
+    HPS_Pins.LTC.I2C.Clock      .hdl_map(SoC_System.hps_io_hps_io_i2c1_inst_SCL);
+    HPS_Pins.LTC.I2C.Data       .hdl_map(SoC_System.hps_io_hps_io_i2c1_inst_SDA);
+
+    HPS_Pins.LTC.SPI.Clock      .hdl_map(SoC_System.hps_io_hps_io_spim1_inst_CLK );
+    HPS_Pins.LTC.SPI.MOSI       .hdl_map(SoC_System.hps_io_hps_io_spim1_inst_MOSI);
+    HPS_Pins.LTC.SPI.MISO       .hdl_map(SoC_System.hps_io_hps_io_spim1_inst_MISO);
+    HPS_Pins.LTC.SPI.SlaveSelect.hdl_map(SoC_System.hps_io_hps_io_spim1_inst_SS0 );
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.UART.Rx      .hdl_map(SoC_System.hps_io_hps_io_uart0_inst_RX);
+    HPS_Pins.UART.Tx      .hdl_map(SoC_System.hps_io_hps_io_uart0_inst_TX);
+    HPS_Pins.UART.nConvUSB.hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO09);
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.I2C.Clock.hdl_map(SoC_System.hps_io_hps_io_i2c0_inst_SCL);
+    HPS_Pins.I2C.Data .hdl_map(SoC_System.hps_io_hps_io_i2c0_inst_SDA);
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.LED               .hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO53);
+    HPS_Pins.KEY               .hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO54);
+    HPS_Pins.G_Sensor.Interrupt.hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO61);
+    //--------------------------------------------------------------------------
+
+    HPS_Pins.DDR3.nReset              .hdl_map(SoC_System.memory_mem_reset_n);
+    HPS_Pins.DDR3.Clock               .hdl_map(SoC_System.memory_mem_ck,
+                                               SoC_System.memory_mem_ck_n   );
+    HPS_Pins.DDR3.ClockEnable         .hdl_map(SoC_System.memory_mem_cke    );
+    HPS_Pins.DDR3.nChipSelect         .hdl_map(SoC_System.memory_mem_cs_n   );
+    HPS_Pins.DDR3.Bank                .hdl_map(SoC_System.memory_mem_ba     );
+    HPS_Pins.DDR3.Address             .hdl_map(SoC_System.memory_mem_a      );
+    HPS_Pins.DDR3.DataMask            .hdl_map(SoC_System.memory_mem_dm     );
+    HPS_Pins.DDR3.nRowAddressStrobe   .hdl_map(SoC_System.memory_mem_ras_n  );
+    HPS_Pins.DDR3.nColumnAddressStrobe.hdl_map(SoC_System.memory_mem_cas_n  );
+    HPS_Pins.DDR3.nWriteEnable        .hdl_map(SoC_System.memory_mem_we_n   );
+    HPS_Pins.DDR3.Data                .hdl_map(SoC_System.memory_mem_dq     );
+    HPS_Pins.DDR3.DataStrobe          .hdl_map(SoC_System.memory_mem_dqs,
+                                               SoC_System.memory_mem_dqs_n  );
+    HPS_Pins.DDR3.OnDieTermination    .hdl_map(SoC_System.memory_mem_odt    );
+    HPS_Pins.DDR3.RZQ                 .hdl_map(SoC_System.memory_oct_rzqin  );
+  }
   //----------------------------------------------------------------------------
 
-  // Ref Cyclone V Hard Processor System Technical Reference Manual Table 2-2
-  AvalonMaster(ControllerClock, MasterReset,  64, 0x_780_0000) Bus;
-  AvalonMaster(ControllerClock, MasterReset,  32, 0x___8_0000) LightWeightBus;
-  AvalonSlave (ControllerClock, MasterReset, 128, 0x_400_0000) SDRAM;
-  //----------------------------------------------------------------------------
+  public{ // Public Interfaces
+    SoC_System.hps_cold_reset_req_reset_n  = !HPS_Reset;
+    SoC_System.hps_warm_reset_req_reset_n  = !HPS_Reset;
+    SoC_System.hps_debug_reset_req_reset_n = !HPS_Reset;
 
-  Bus'BaseAddress = 0xFF20_0000;
+    HPS_FPGA_Reset = SoC_System.hps_reset_out_reset;
+    //--------------------------------------------------------------------------
 
-  Bus.Address = SoC_System.Bus_Address;
-  SoC_System.Bus_Address = Bus.WaitRequest;
+    AvalonMaster(ControllerClock, MasterReset, 32, 0x10000) LightWeightBus;
+    LightWeightBus'BaseAddress = 0xC000_0000;
 
-  Bus.WriteData = SoC_System.Bus_WriteData;
-  Bus.Write     = SoC_System.Bus_Write;
+    SoC_System.light_weight_bus_clk_clk       = ControllerClock;
+    SoC_System.light_weight_bus_reset_reset   = MasterReset;
 
-  Bus.Read = SoC_System.Bus_Read;
-  SoC_System.Bus_ReadData  = Bus.ReadData;
-  SoC_System.Bus_ReadValid = Bus.ReadValid;
-  //----------------------------------------------------------------------------
+    LightWeightBus.Address                    = SoC_System.light_weight_bus_address;
+    LightWeightBus.ByteEnable                 = SoC_System.light_weight_bus_byteenable;
+    SoC_System.light_weight_bus_waitrequest   = LightWeightBus.WaitRequest;
 
-  LightWeightBus'BaseAddress = 0xC000_0000;
+    LightWeightBus.WriteData                  = SoC_System.light_weight_bus_writedata;
+    LightWeightBus.Write                      = SoC_System.light_weight_bus_write;
 
-  LightWeightBus.Address = SoC_System.LightWeightBus_Address;
-  SoC_System.LightWeightBus_Address = LightWeightBus.WaitRequest;
+    LightWeightBus.Read                       = SoC_System.light_weight_bus_read;
+    SoC_System.light_weight_bus_readdata      = LightWeightBus.ReadData;
+    SoC_System.light_weight_bus_readdatavalid = LightWeightBus.ReadValid;
+    //--------------------------------------------------------------------------
 
-  LightWeightBus.WriteData = SoC_System.LightWeightBus_WriteData;
-  LightWeightBus.Write     = SoC_System.LightWeightBus_Write;
+    AvalonSlave(SoC_System.hps_clk_out_clk,
+                SoC_System.hps_reset_out_reset,
+                256, 0x_200_0000, 128) SDRAM;
 
-  LightWeightBus.Read = SoC_System.LightWeightBus_Read;
-  SoC_System.LightWeightBus_ReadData  = LightWeightBus.ReadData;
-  SoC_System.LightWeightBus_ReadValid = LightWeightBus.ReadValid;
-  //----------------------------------------------------------------------------
+    SDRAM.Clock'frequency = 100e6;
 
-  SoC_System.SDRAM.Address = SDRAM.Address;
-  SDRAM.Address = Soc_System.SDRAM.WaitRequest;
+    SoC_System.sdram_address    = SDRAM.Address;
+    SoC_System.sdram_byteenable = SDRAM.ByteEnable;
+    SoC_System.sdram_burstcount = SDRAM.BurstCount;
+    SDRAM.WaitRequest           = SoC_System.sdram_waitrequest;
 
-  SoC_System.SDRAM.WriteData = SDRAM.WriteData;
-  SoC_System.SDRAM.Write     = SDRAM.Write;
+    SoC_System.sdram_writedata  = SDRAM.WriteData;
+    SoC_System.sdram_write      = SDRAM.Write;
 
-  SoC_System.SDRAM.Read = SDRAM.Read;
-  SDRAM.ReadData  = Soc_System.SDRAM.ReadData;
-  SDRAM.ReadValid = Soc_System.SDRAM.ReadValid;
+    SoC_System.sdram_read       = SDRAM.Read;
+    SDRAM.ReadData              = SoC_System.sdram_readdata;
+    SDRAM.ReadValid             = SoC_System.sdram_readdatavalid;
+    //--------------------------------------------------------------------------
+
+    AvalonInterface(16, 1p13) StreamBuffer;
+    StreamBuffer'BaseAddress = 0xFF20_0000;
+
+    SoC_System.streambuffer_clk_clk     = DspClock;
+    SoC_System.streambuffer_clken       = 1;
+    SoC_System.streambuffer_reset_reset = MasterReset;
+    SoC_System.streambuffer_chipselect  = 1;
+
+    SoC_System.streambuffer_address     = StreamBuffer.Address;
+    SoC_System.streambuffer_byteenable  = 0b11;
+
+    SoC_System.streambuffer_writedata   = StreamBuffer.WriteData;
+    SoC_System.streambuffer_write       = StreamBuffer.Write;
+
+    StreamBuffer.ReadData  = SoC_System.streambuffer_readdata;
+    StreamBuffer.ReadValid = 1;
+  }
 }
-//------------------------------------------------------------------------------
-
-!! Create an instance of the SoC system
-//------------------------------------------------------------------------------
-
-!! Do all the pin-mapping to the global pins, including all the HPS pins so that
-!! Quartus does not complain about "unassigned pins"
+SystemController_Class() SystemController;
 //------------------------------------------------------------------------------
 

@@ -2,6 +2,9 @@ import "Library/Interfaces/AvalonInterface"
 //------------------------------------------------------------------------------
 
 class AvalonMaster(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){
+  'BaseAddress = 0;
+  //----------------------------------------------------------------------------
+    
   private
     num Used                  = 0;
     net ReadingWaitRequest    = 0;
@@ -17,20 +20,21 @@ class AvalonMaster(net Clock, net Reset, num Width, num Depth): AvalonInterface(
     assert(Interface.Width == Width);
     assert(Interface.Depth <  Depth - Used);
 
-    Interface.Address = Address - Used;
+    Interface.Address      = Address - Used;
+    Interface.ByteEnable   = ByteEnable;
     InterfacesWaitRequest |= Interface.WaitRequest;
 
     net AddressValid = (Address >= Used)
-                    && (Address < (Used + Interface.Depth));
+                     & (Address < (Used + Interface.Depth));
 
     Interface.WriteData = WriteData;
-    Interface.Write     = AddressValid && Write && !WaitRequest;
+    Interface.Write     = AddressValid & Write & !WaitRequest;
 
-    Interface.Read = AddressValid && Read && !WaitRequest;
+    Interface.Read = AddressValid & Read & !WaitRequest;
     ReadData      |= Interface.ReadValid ? Interface.ReadData : 0;
     ReadValid     |= Interface.ReadValid;
 
-    Interface'BaseAddress = Used;
+    Interface'BaseAddress = 'BaseAddress + Used*(Width/8);
     Used += Interface.Depth;
   }
   //--------------------------------------------------------------------------

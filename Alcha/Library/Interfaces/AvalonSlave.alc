@@ -1,8 +1,9 @@
 import "Library/Interfaces/AvalonInterface"
 //------------------------------------------------------------------------------
 
-class AvalonSlave(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){
-  !! Implement this (loosely based on AvalonMaster
+class AvalonSlave(net Clock, net Reset, num Width, num Depth, num MaxBurstCount = 1):
+      AvalonInterface(Width, Depth, MaxBurstCount){
+  // No additional stuff required -- the Clock and Reset is sufficient
 }
 //------------------------------------------------------------------------------
 

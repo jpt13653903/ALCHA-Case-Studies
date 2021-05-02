@@ -63,6 +63,8 @@ alias ControlClock = PLL.Output[1];
 
 import "Library/Clocking_and_Reset/DelayedReset";
 
-net MasterReset = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 100);
+net HPS_Reset      = DelayedReset(ControlClock, ResetKey | ~PLL.Locked, 1);
+net HPS_FPGA_Reset = 0; // Assigned by SystemController
+net MasterReset    = DelayedReset(ControlClock, HPS_FPGA_Reset | ResetKey | ~PLL.Locked, 100);
 //------------------------------------------------------------------------------
 

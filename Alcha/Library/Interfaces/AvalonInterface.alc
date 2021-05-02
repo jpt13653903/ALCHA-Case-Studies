@@ -1,15 +1,19 @@
-class AvalonInterface(num Width, num Depth){
-  num AddressWidth = ceil(log2(Depth));
+class AvalonInterface(num Width, num Depth, num MaxBurstCount = 1){
+  num AddressWidth    = ceil(log2(Depth));
+  num NumBytes        = ceil(Width/8);
+  num BurstCountWidth = ceil(log2(MaxBurstCount + 1));
 
-  net(AddressWidth) Address;
-  net               WaitRequest = 1;
+  net(AddressWidth)    Address;
+  net(NumBytes)        ByteEnable  = 2**NumBytes - 1;
+  net(BurstCountWidth) BurstCount  = 1;
+  net                  WaitRequest = 1;
 
-  net(Width)        WriteData;
-  net               Write = 0;
+  net(Width)           WriteData;
+  net                  Write = 0;
 
-  net               Read = 0;
-  net(Width)        ReadData;
-  net               ReadValid = 0;
+  net                  Read = 0;
+  net(Width)           ReadData;
+  net                  ReadValid = 0;
 }
 //------------------------------------------------------------------------------
 
