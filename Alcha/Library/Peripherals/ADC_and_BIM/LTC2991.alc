@@ -1,27 +1,38 @@
 import "Library/Comms/I2C/I2C"
 //------------------------------------------------------------------------------
 
-class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50): I2C(Clk, Reset, Baud_kHz){
-  input net( 5) EnableReg;   // Register  01
-  input net(32) ControlRegs; // Registers 09..06
+class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50):
+      I2C(Clk, Reset, Baud_kHz){
+  input  net( 5) Enable  = 0b11111; // Register  01
+  input  net(32) Control = 0;       // Registers 09..06
+
+  enum TYPE{ Voltage, Differential, Temperature }
+  void SetType(num Channel, TYPE Type){
+    assert(Channel >= 0 & Channel < 4);
+
+    switch(Type){
+      case(Voltage     ) ControlRegs[(4*Channel+3)..(4*Channel)] = 0;
+      case(Differential) ControlRegs[(4*Channel+3)..(4*Channel)] = 1;
+      case(Temperature ) ControlRegs[(4*Channel+3)..(4*Channel)] = 2;
+    }
+  }
 
   output net(-15) Vcc;
   output net(-15) V[8];
-  output net(-15) Temp;
+  output net(-15) InternalTemp;
 
   group MutEx{
     output net Request;
-           net Grant = Request; // Default behaviour without a controller
+    input  net Grant = Request; // Default behaviour without a controller
   }
 
   void MakeRegisters(Registers){
     Registers.ReadOnly (Error);
-    Registers.Writeable(EnableReg);
-    Registers.Writeable(ControlRegs);
+    // Enable and Control registers are generally hard-coded
 
     Registers.ReadOnly(Vcc);
     for(n in 0..7) Registers.ReadOnly(V[n]);
-    Registers.ReadOnly(Temp);
+    Registers.ReadOnly(InternalTemp);
   }
 
   fsm(Clk, Reset){

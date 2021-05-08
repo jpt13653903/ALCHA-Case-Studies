@@ -41,7 +41,7 @@ class I2C(net Clk, net Reset, num Baud_kHz = 50){
     // If ClkIn != ClkOut it means that the slave is clock-stretching
     fsm(Clk, Reset, Baud_Trigger & (ClkIn == ClkOut) & !Quiet){
       // Start / Restart
-      Data = TxData,
+      Data = TxData;
       if(Start | ClkOut){
         if(!ClkOut & !DataOut) DataOut = 1;
         if(!ClkOut &  DataOut) ClkOut  = 1;
