@@ -3,8 +3,8 @@ import "Library/Comms/I2C/I2C"
 
 class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50):
       I2C(Clk, Reset, Baud_kHz){
-  input  net( 5) Enable  = 0b11111; // Register  01
-  input  net(32) Control = 0;       // Registers 09..06
+  input net( 5) Enable  = 0b11111; // Register  01
+  input net(32) Control = 0;       // Registers 09..06
 
   enum TYPE{ Voltage, Differential, Temperature }
   void SetType(num Channel, TYPE Type){
@@ -23,7 +23,7 @@ class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50):
 
   group MutEx{
     output net Request;
-    input  net Grant = Request; // Default behaviour without a controller
+    input  net Grant = Request; // Default behaviour without a MutEx lock
   }
 
   void MakeRegisters(Registers){

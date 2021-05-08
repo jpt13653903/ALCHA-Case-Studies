@@ -10,6 +10,11 @@ MutEx(ControlClock, MasterReset) I2C_MutEx;
 
 LTC2991(ControlClock, MasterReset, 0b000) TxBIM;
 
+TxBIM.SetType(0, LTC2991.TYPE.Voltage);
+TxBIM.SetType(1, LTC2991.TYPE.Voltage);
+TxBIM.SetType(2, LTC2991.TYPE.Voltage);
+TxBIM.SetType(3, LTC2991.TYPE.Temperature);
+
 TxBIM.Quiet = !TxEnable;
 TxBIM.MakeRegisters(Registers);
 TxBIM.ConnectBus(I2C.SClk, I2C.Data);
@@ -18,6 +23,11 @@ I2C_MutEx.Add(TxBIM);
 //------------------------------------------------------------------------------
 
 LTC2991(ControlClock, MasterReset, 0b001) RxBIM;
+
+RxBIM.SetType(0, LTC2991.TYPE.Voltage);
+RxBIM.SetType(1, LTC2991.TYPE.Differential);
+RxBIM.SetType(2, LTC2991.TYPE.Voltage);
+RxBIM.SetType(3, LTC2991.TYPE.Temperature);
 
 RxBIM.Quiet = !TxEnable;
 RxBIM.MakeRegisters(Registers);
