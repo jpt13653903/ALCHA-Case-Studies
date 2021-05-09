@@ -3,9 +3,9 @@ class I2C(net Clk, net Reset, num Baud_kHz = 50){
   output net Error = 0;
   //----------------------------------------------------------------------------
 
-  private{
+  private{ // Baud Counter
     num Baud_Cycles = round(Clk'frequency / (Baud_kHz*3));
-    num Baud_N      = ceil(log2(Baud_Count));
+    num Baud_N      = ceil(log2(Baud_Cycles));
     net(Baud_N) Baud_Count;
 
     rtl(Clk){
@@ -31,10 +31,10 @@ class I2C(net Clk, net Reset, num Baud_kHz = 50){
 
   net(8) Transaction(
     net(8) TxData,
-    num    Start = false,
-    num    R_nW  = false,
-    num    Ack   = true,
-    num    Stop  = false
+    bool   Start = false,
+    bool   R_nW  = false,
+    bool   Ack   = true,
+    bool   Stop  = false
   ){
     net(8) Data;
 

@@ -1,0 +1,348 @@
+class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
+  public{ // Ports
+    // Tuning parameters
+    net(  4) CP_CurrentSetting = 7;
+
+    // Output frequency select
+    net( 12) Integer           = 0;
+    net( 25) Fraction          = 0;
+    net      RampOn            = 0;
+
+    // Ramp up control
+    net(-15) DeviationWord_0   = 0;
+    net(  4) DeviationOffset_0 = 0;
+    net( 20) StepWord_0        = 0;
+
+    // Ramp down control 
+    net(-15) DeviationWord_1   = 0;
+    net(  4) DeviationOffset_1 = 0;
+    net( 20) StepWord_1        = 0;
+
+    // Other
+    net      UseRefMul2        = 0;
+    net(  5) RefCounter        = 1;
+    net      UseRefDiv2        = 1;
+
+    net( 12) Clk1Divider       = 1;
+    net( 12) Clk2Divider_0     = 2;
+    net( 12) Clk2Divider_1     = 2;
+
+    // Control interface
+    input  net     Update;
+    output net     Busy = 1;
+    input  net     Trigger;
+
+    // Constants we generally don't want to change...
+    input  net(  4) MuxOutControl      = 0xF;
+    input  net      PhaseAdjust        = 0;
+    input  net( 12) PhaseValue         = 0;
+    input  net      CSR_Enable         = 0;
+    input  net      Prescaler          = 0;
+    input  net(  3) NegBleedCurrent    = 4;
+    input  net      NegBleedEnable     = 0;
+    input  net      LossOfLock         = 0;
+    input  net      NSel               = 0;
+    input  net      SD_Reset           = 0;
+    input  net(  2) RampMode           = 3;
+    input  net      PSK                = 0;
+    input  net      FSK                = 0;
+    input  net      LDP                = 1;
+    input  net      PDPolarity         = 0;
+    input  net      PowerDown          = 0;
+    input  net      CP_ThreeState      = 0;
+    input  net      CounterReset       = 0;
+    input  net      LE_Select          = 0;
+    input  net(  5) SD_ModulatorMode   = 0;
+    input  net(  5) RampStatus         = 3;
+    input  net(  2) ClkDivMode         = 3;
+    input  net      TxDataInvert       = 0;
+    input  net      TxDataRampClk      = 0;
+    input  net      ParabolicRamp      = 0;
+    input  net(  2) Interrupt          = 0;
+    input  net      FSK_Ramp           = 0;
+    input  net      DualRamp           = 0;
+    input  net      TxDataTriggerDelay = 0;
+    input  net      TriDelay           = 0;
+    input  net      SingleFullTriangle = 1;
+    input  net      TxDataTrigger      = 1;
+    input  net      FastRamp           = 1;
+    input  net      RampDelayFastLock  = 0;
+    input  net      RampDelay          = 0;
+    input  net      DelClkSel          = 0;
+    input  net      DelStartEn         = 0;
+    input  net( 12) DelayStartWord     = 0;
+  }
+  //----------------------------------------------------------------------------
+
+  private{ // Local nets of the device pins
+    net SPI_Clk = 0;
+    net SPI_Data;
+    net SPI_LE  = 1;
+  }
+
+  void ConnectPins(pin SClk, pin Data, pin LE, pin TxData){
+    SClk   = SPI_Clk;
+    Data   = SPI_Data;
+    LE     = SPI_LE;
+    TxData = Trigger & RampOn;
+
+    !! Assign the device-specific timing parameters
+  }
+  //----------------------------------------------------------------------------
+
+  private{ // Convenience variables
+    num  RefFreq         = 0;
+    num  PfdFreq         = 0;
+    num  StartFreq       = 10e9;
+    bool FeedbackVcoDiv2 = true;
+
+    bool UseRefMul2 = false;
+    bool UseRefDiv2 = false;
+  }
+  //----------------------------------------------------------------------------
+
+  void SetStart(num StartFreq){
+    assert(RefFreq > 0); // Check that SetRefFreq() was called first
+    this.StartFreq = StartFreq;
+
+    num Frequency = FeedbackVcoDiv2
+                  ? round(0x1p24 * StartFreq / PfdFreq)
+                  : round(0x1p25 * StartFreq / PfdFreq);
+
+    Integer  = Frequency >> 25;
+    Fraction = Frequency & 0x01FFFFFF;
+  }
+  //----------------------------------------------------------------------------
+
+  private void SetRamp(bool Up, num Bandwidth, num Time){
+    assert(RefFreq > 0); // Check that SetRefFreq() was called first
+    
+        Clk1Divider     = 1;
+    num Clk2Divider     = 2;
+    num StepWord        = 0;
+    num DeviationOffset = 0;
+    num DeviationWord   = 0;
+
+    Clk2Divider = PfdFreq / ((1p20 - 1) / Time);
+    if(Clk2Divider < 2) Clk2Divider = 2;
+    assert(Clk2Divider < 1p12);
+
+    StepWord = round((PfdFreq / Clk2Divider) * Time);
+    assert(StepWord < 1p20);
+
+    DeviationOffset = 0;
+    DeviationWord   = round((Bandwidth / StepWord) /
+                            (PfdFreq   / 1p25    ) /
+                            (2**DeviationOffset  ));
+
+    while(abs(DeviationWord) >= 1p15){
+      DeviationOffset++;
+      DeviationWord /= 2;
+    }
+    assert(DeviationOffset < 1p4);
+
+    if(Up){
+      Clk2Divider_0     = Clk2Divider;
+      StepWord_0        = StepWord;
+      DeviationOffset_0 = DeviationOffset;
+      DeviationWord_0   = DeviationWord;
+    }else{
+      Clk2Divider_1     = Clk2Divider;
+      StepWord_1        = StepWord;
+      DeviationOffset_1 = DeviationOffset;
+      DeviationWord_1   = DeviationWord;
+    }
+  }
+  void SetRampUp  (num Bandwidth, num Time){ SetRamp(true , Bandwidth, Time); }
+  void SetRampDown(num Bandwidth, num Time){ SetRamp(false, Bandwidth, Time); }
+  //----------------------------------------------------------------------------
+
+  // NOTE: Set this before using SetStart or SetRamp
+  void SetRefFreq(num RefFreq, bool FeedbackVcoDiv2 = true){
+    this.RefFreq         = RefFreq;
+    this.FeedbackVcoDiv2 = FeedbackVcoDiv2;
+
+    UseRefMul2 = false;
+    UseRefDiv2 = false;
+    PfdFreq    = RefFreq;
+
+    if(RefFreq > 110e6){
+      UseRefDiv2 = true;
+      PfdFreq  /= 2;
+    }
+    if(RefFreq < 55e6){
+      UseRefMul2 = true;
+      PfdFreq  *= 2;
+    }
+    num RefDiv = 1;
+    while(RefDiv < 32 && PfdFreq > 110e6){
+      RefDiv++;
+      PfdFreq /= 2;
+    }
+    RefCounter = RefDiv;
+    SetStart(StartFreq);
+  }
+  //----------------------------------------------------------------------------
+
+  private{ // Parameters to device Registers mapping
+    net(32) R0   = :(RampOn,
+                     MuxOutControl,
+                     Integer,
+                     Fraction[24..13],
+                     0@3);
+
+    net(32) R1   = :(0@3,
+                     PhaseAdjust,
+                     Fraction[12..0],
+                     PhaseValue,
+                     1@3);
+
+    net(32) R2   = :(0@3
+                     CSR_Enable,
+                     CP_CurrentSetting,
+                     0@1,
+                     Prescaler,
+                     UseRefDiv2,
+                     UseRefMul2,
+                     RefCounter,
+                     Clk1Divider,
+                     2@3);
+
+    net(32) R3   = :(0@7,
+                     NegBleedCurrent,
+                     NegBleedEnable,
+                     1@4,
+                     LossOfLock,
+                     NSel,
+                     SD_Reset,
+                     0@2,
+                     RampMode,
+                     PSK,
+                     FSK,
+                     LDP,
+                     PDPolarity,
+                     PowerDown,
+                     CP_ThreeState,
+                     CounterReset,
+                     3@3);
+
+    net(32) R4_0 = :(LE_Select,
+                     SD_ModulatorMode,
+                     RampStatus,
+                     ClkDivMode,
+                     Clk2Divider_0,
+                     0@1,
+                     0@3,
+                     4@3);
+
+    net(32) R4_1 = :(LE_Select,
+                     SD_ModulatorMode,
+                     RampStatus,
+                     ClkDivMode,
+                     Clk2Divider_1,
+                     1@1,
+                     0@3,
+                     4@3);
+
+    net(32) R5_0 = :(0@1,
+                     TxDataInvert,
+                     TxDataRampClk,
+                     ParabolicRamp,
+                     Interrupt,
+                     FSK_Ramp,
+                     DualRamp,
+                     0@1,
+                     DeviationOffset_0,
+                     DeviationWord_0,
+                     5@3);
+
+    net(32) R5_1 = :(0@1,
+                     TxDataInvert,
+                     TxDataRampClk,
+                     ParabolicRamp,
+                     Interrupt,
+                     FSK_Ramp,
+                     DualRamp,
+                     1@1,
+                     DeviationOffset_1,
+                     DeviationWord_1,
+                     5@3);
+
+    net(32) R6_0 = :(0@9,
+                     StepWord_0,
+                     6@3);
+
+    net(32) R6_1 = :(1@9,
+                     StepWord_1,
+                     6@3);
+
+    net(32) R7   = :(0@8,
+                     TxDataTriggerDelay,
+                     TriDelay,
+                     SingleFullTriangle,
+                     TxDataTrigger,
+                     FastRamp,
+                     RampDelayFastLock,
+                     RampDelay,
+                     DelClkSel,
+                     DelStartEn,
+                     DelayStartWord,
+                     7@3);
+  }
+  //----------------------------------------------------------------------------
+
+  private{ // Baud Counter
+    num Baud_Cycles = round(Clk'frequency / (Baud_kHz*2));
+    num Baud_N      = ceil(log2(Baud_Cycles));
+    net(Baud_N) Baud_Count;
+
+    rtl(Clk){
+      if(Baud_Count) Baud_Count--;
+      else           Baud_Count = Baud_Cycles-1;
+    }
+    net Baud_Trigger = ~|Baud_Count;
+  }
+  //----------------------------------------------------------------------------
+
+  private void SendSPI(net(32) Register){
+    net(32) Data;
+    SPI_Data = Data[31];
+
+    fsm{
+      Data   = Register,
+      SPI_LE = 0;
+
+      loop(32){
+        SPI_Clk = 1;
+        SPI_Clk = 0, Data <<= 1;
+      }
+
+      SPI_LE = 1;
+    }
+  }
+  //----------------------------------------------------------------------------
+
+  fsm(Clk, Reset, Baud_Trigger){
+    loop{
+      Busy = 0,
+      while(!Update);
+
+      Busy = 1,
+      SendSPI(R7);
+      SendSPI(R6_1);
+      SendSPI(R6_0);
+      SendSPI(R5_1);
+      SendSPI(R5_0);
+      SendSPI(R4_1);
+      SendSPI(R4_0);
+      SendSPI(R3);
+      SendSPI(R2);
+      SendSPI(R1);
+      SendSPI(R0);
+
+      while(Update);
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

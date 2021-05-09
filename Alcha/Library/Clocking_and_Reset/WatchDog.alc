@@ -1,4 +1,4 @@
-class WhatchDog(net Clk, net Kick, num Timeout_ms, num EdgeSensitive = false){
+class WhatchDog(net Clk, net Kick, num Timeout_ms, bool EdgeSensitive = false){
   private{
     num Timeout_cycles = round(Clk'frequency * (Timeout_ms*1e-3));
     num N = ceil(log2(Delay_cycles));
