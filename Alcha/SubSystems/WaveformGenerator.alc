@@ -1,0 +1,33 @@
+import "Library/Timing/TriggerDelay"
+import "Library/Peripherals/Synth_and_DDS/ADF4159"
+//------------------------------------------------------------------------------
+
+TriggerDelay(ControlClock, MasterReset, MasterTrigger) SynthTrigger;
+
+Registers.Writeable(SynthTrigger.Enable);
+Registers.Writeable(SynthTrigger.Delay );
+Registers.Writeable(SynthTrigger.Length);
+//------------------------------------------------------------------------------
+
+ADF4159(ControlClock, MasterReset) SynthInst;
+
+Registers.Writeable(SynthInst.CP_CurrentSetting);
+Registers.Writeable(SynthInst.RampOn);
+Registers.Writeable(SynthInst.Update);
+Registers.ReadOnly (SynthInst.Busy);
+
+SynthInst.SetRefFreq(100e6, true);
+SynthInst.SetStart  (9.5e9);
+SynthInst.SetRamp   (150e6, 1e-3, 50e-6);
+
+Registers.Writeable(SynthInst.Integer );
+Registers.Writeable(SynthInst.Fraction);
+
+SynthInst.Trigger = SynthTrigger.Output;
+
+SynthInst.ConnectPins(Synth.SPI.SClk,
+                      Synth.SPI.Data,
+                      Synth.SPI.Latch,
+                      Synth.Trigger);
+//------------------------------------------------------------------------------
+

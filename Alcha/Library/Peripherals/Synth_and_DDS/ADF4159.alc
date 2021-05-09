@@ -153,8 +153,10 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
       DeviationWord_1   = DeviationWord;
     }
   }
-  void SetRampUp  (num Bandwidth, num Time){ SetRamp(true , Bandwidth, Time); }
-  void SetRampDown(num Bandwidth, num Time){ SetRamp(false, Bandwidth, Time); }
+  void SetRamp(num Bandwidth, num UpTime, num DownTime){
+    SetRamp(true , Bandwidth, UpTime  );
+    SetRamp(false, Bandwidth, DownTime);
+  }
   //----------------------------------------------------------------------------
 
   // NOTE: Set this before using SetStart or SetRamp
