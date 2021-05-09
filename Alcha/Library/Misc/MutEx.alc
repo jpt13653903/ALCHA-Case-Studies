@@ -7,7 +7,7 @@ class MutEx(net Clk, net Reset){
   }
   //----------------------------------------------------------------------------
 
-  void Generate(){
+  void finally(){
     num N = 'Modules'length;
     assert(N > 0);
 

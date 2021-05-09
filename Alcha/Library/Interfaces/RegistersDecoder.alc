@@ -75,6 +75,16 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
     void GenerateLaTeX(string Filename){
       !! Generate the LaTeX documentation files
     }
+    //--------------------------------------------------------------------------
+
+    string CppFilename   = "";
+    string LaTeXFilename = "";
+
+    void finally(){
+      GenerateRegs();
+      if(CppFilename  'length) GenerateCpp  (CppFilename  );
+      if(LaTeXFilename'langth) GenerateLaTeX(LaTeXFilename);
+    }
   }
 }
 //------------------------------------------------------------------------------

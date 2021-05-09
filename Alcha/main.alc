@@ -6,6 +6,9 @@ import "SubSystems/SystemController";
 
 import "Library/Interfaces/RegistersDecoder";
 RegistersDecoder(SystemController.LightWeightBus) Registers;
+
+Registers.CppFilename   = "../Software/Registers/Registers";
+Registers.LaTeXFilename = "../Documentation/Registers";
 //------------------------------------------------------------------------------
 
 import "Library/Misc/FirmwareVersion";
@@ -33,10 +36,5 @@ import "SubSystems/RadarProcessor" as Processor;
 //------------------------------------------------------------------------------
 
 import "SubSystems/DataStreamer" as Streamer;
-//------------------------------------------------------------------------------
-
-Registers.GenerateRegs ();
-Registers.GenerateCpp  ("../Software/Registers/Registers");
-Registers.GenerateLaTeX("../Documentation/Registers");
 //------------------------------------------------------------------------------
 
