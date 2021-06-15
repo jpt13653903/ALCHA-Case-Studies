@@ -1,0 +1,46 @@
+import "Library/Timing/TriggerDelay"
+import "Library/Peripherals/ADC_and_BIM/ADS7056"
+import "Packetiser"
+//------------------------------------------------------------------------------
+
+ADS7056(DspClock, MasterReset) ADC;
+//------------------------------------------------------------------------------
+
+TriggerDelay(ControlClock, MasterReset, MasterTrigger) PacketTrigger;
+
+Registers.Writeable(PacketTrigger.Enable);
+Registers.Writeable(PacketTrigger.Delay );
+Registers.Writeable(PacketTrigger.Length);
+
+net PacketTrigger_DSP;
+rtl(DspClock) PacketTrigger_DSP = PacketTrigger.Output;
+//------------------------------------------------------------------------------
+
+group Packet{
+  net SoP;
+  net EoP;
+  net Valid = 0;
+}
+
+private net(12) n;
+private num     N = 2500;
+
+fsm(DspClock, MasterReset){
+  loop{
+    n = 0,
+    Packet.Valid = 0,
+    while(!PacketTrigger_DSP);
+    ;
+
+    while(n < N){
+      Packet.SoP   = (n == 0),
+      Packet.EoP   = (n == N-1),
+      Packet.Data  = ADC.Output.Data,
+      Packet.Valid = ADC.Output.Valid,
+      if(ADC.Output.Valid) n++,
+      ;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

@@ -27,7 +27,7 @@ class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50):
   }
 
   void MakeRegisters(Registers){
-    Registers.ReadOnly (Error);
+    Registers.ReadOnly(Error);
     // Enable and Control registers are generally hard-coded
 
     Registers.ReadOnly(Vcc);

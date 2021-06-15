@@ -328,6 +328,7 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
     loop{
       Busy = 0,
       while(!Update);
+      ;
 
       Busy = 1,
       SendSPI(R7);
