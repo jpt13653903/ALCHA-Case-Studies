@@ -1,0 +1,41 @@
+alias Buffer = SystemController.StreamBuffer;
+//------------------------------------------------------------------------------
+
+net(Buffer.Address'width) WrAddress = 0;
+net(Buffer.Address'width) RdAddress = 0;
+
+Registers.ReadOnly (WrAddress);
+Registers.Writeable(RdAddress);
+//------------------------------------------------------------------------------
+
+Buffer.Address = 0;
+
+fsm(DspClock, MasterReset){
+  loop{
+    loop{ // Synchronise to SoP
+      if(Buffer.Write) Buffer.Address++,
+      else             WrAddress = Buffer.Address,
+
+      Buffer.WriteData := Packet.Data,
+
+      if(Packet.Valid & Packet.SoP){
+        Buffer.Write = 1,
+        break;
+      }else{
+        Buffer.Write = 0;
+      }
+    }
+
+    loop{ // Write the packet
+      Buffer.WriteData := Packet.Data,
+      Buffer.Write      = Packet.Valid,
+      if(Packet.Valid){
+        Buffer.Address++,
+        if(Packet.EoP) break;
+      }
+      ;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

@@ -1,0 +1,14 @@
+import "SinCos"
+//------------------------------------------------------------------------------
+
+class NCO(net Clk, net Reset){
+  input  net(32, -Clk'frequency/2) Frequency;
+  output net(18, -1) Sin, Cos;
+
+  private net(32, -pi) Phase = 0;
+  rtl(Clk, Reset) Phase := :Phase + :Frequency;
+
+  SinCos(Clk, Phase, Sin, Cos);
+}
+//------------------------------------------------------------------------------
+

@@ -1,0 +1,39 @@
+void SinCos(
+  net Clk,
+  net(20, -pi) Angle,    // Input
+  net(18, -1 ) Sin, Cos, // Output
+  num N = 20             // Number of iterations
+){
+  num K = product(cos(atan(2**(0 .. (N-1)))));
+  num n;
+  net(21, -2   ) x[N+1], y[N+1];
+  net(21, -2*pi) a[N+1], A[N+1];
+
+  rtl(Clk){
+    switch(Angle[20, 19]){ // Init in the correct quadrant
+      case(0b00){x[0] =  K; y[0] =  0; a[0] =   0  ;}
+      case(0b01){x[0] =  0; y[0] =  K; a[0] =  pi/2;}
+      case(0b10){x[0] = -K; y[0] =  0; a[0] = -pi  ;}
+      case(0b11){x[0] =  0; y[0] = -K; a[0] = -pi/2;}
+    }
+    A[0] = Angle;
+    for(n in 0..(N-1)){ // Iterate N times, pipelined
+      if(A[n] >= a[n]){
+        x[n+1] = x[n] - (y[n] / 2**n);
+        y[n+1] = y[n] + (x[n] / 2**n);
+        a[n+1] = a[n] + atan(2**(-n));
+      }else{
+        x[n+1] = x[n] + (y[n] / 2**n);
+        y[n+1] = y[n] - (x[n] / 2**n);
+        a[n+1] = a[n] - atan(2**(-n));
+      }
+      A[n+1] = A[n];
+    }
+  }
+  group<overflow = "clip">{ // Clip instead of overflow
+    Sin = y[N];
+    Cos = x[N];
+  }
+}
+//------------------------------------------------------------------------------
+
