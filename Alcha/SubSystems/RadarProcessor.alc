@@ -1,9 +1,9 @@
 import "Library/DSP/NCO"
 //------------------------------------------------------------------------------
 
-NCO(DspClock, MasterReset) NCO_Inst;
+NCO(DspClock, MasterReset | MasterTrigger) LO;
 
-!! TODO
-Registers.
+LO.Frequency = -2.5e6/4;
+Registers.Writeable(LO.Frequency);
 //------------------------------------------------------------------------------
 

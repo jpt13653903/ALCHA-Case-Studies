@@ -31,19 +31,27 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
     }
     //--------------------------------------------------------------------------
 
+    net(32) Resize(x){
+      result := x; // Raw-assign the bits
+      num N = x'width;
+      if((x'fullscale < 0) & (N < 31)) // Sign-extend
+        result(31..(N+1)) := x`(31-N);
+    }
+    //--------------------------------------------------------------------------
+
     void GenerateRegs(){
       rtl(Bus.Clock, Bus.Reset){
         WaitRequest = 0;
 
         switch(Address){
           for(Register in 'RdRegisters){
-            case(Register'Address) ReadData = Register;
+            case(Register'Address) ReadData = Resize(Register);
           }
           for(Register in 'WrRegisters){
-            case(Register'Address) ReadData = Register;
+            case(Register'Address) ReadData = Resize(Register);
           }
           for(Register in 'LiveRegisters){
-            case(Register'Read'Address) ReadData = Register'Read;
+            case(Register'Read'Address) ReadData = Resize(Register'Read);
           }
         }
         ReadValid = Read;
@@ -51,14 +59,14 @@ class RegistersDecoder(Bus): AvalonInterface(32, 0x1000){
         if(Write){
           switch(Address){
             for(Register in 'WrRegisters){
-              case(Register'Address) Register = WriteData;
+              case(Register'Address) Register := WriteData;
             }
             for(Register in 'LiveRegisters){
-              case(Register'Write'Address) Register'Write = WriteData;
+              case(Register'Write'Address) Register'Write := WriteData;
             }
           }
           for(Register in 'LiveRegisters){
-            Register'Strobe = (Address == Register'Strobe'Address & Write);
+            Register'Strobe = ((Address == Register'Strobe'Address) & Write);
           }
         }
       }

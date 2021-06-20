@@ -1,0 +1,65 @@
+class DualPortMemory(net Clk, net Reset, num Width, num Depth){
+  private{
+    string RamBlockType;
+    switch('target_series){
+      case("MAX 10"   ) RamBlockType = "M9K";
+      case("Cyclone V") RamBlockType = "M10K";
+      case("Arria 10" ) RamBlockType = "M20K";
+      default           assert(false);
+    }
+    num AddressWidth = ceil(log2(Depth));
+
+    hdl() altsyncram (
+      address_aclr_b                     = "NONE";
+      address_reg_b                      = "CLOCK0";
+      clock_enable_input_a               = "BYPASS",
+      clock_enable_input_b               = "BYPASS";
+      clock_enable_output_b              = "BYPASS";
+      intended_device_family             = 'target_series;
+      lpm_type                           = "altsyncram";
+      maximum_depth                      = 1024;
+      numwords_a                         = Depth;
+      numwords_b                         = Depth;
+      operation_mode                     = "DUAL_PORT";
+      outdata_aclr_b                     = "NONE";
+      outdata_reg_b                      = "UNREGISTERED";
+      power_up_uninitialized             = "FALSE";
+      ram_block_type                     = RamBlockType;
+      read_during_write_mode_mixed_ports = "DONT_CARE";
+      widthad_a                          = AddressWidth;
+      widthad_b                          = AddressWidth;
+      width_a                            = Width;
+      width_b                            = Width;
+      width_byteena_a                    = 1;
+    ){
+      net clock0 = Clk;
+
+      net(AddressWidth) address_a;
+      net(Width       ) data_a;
+      net               wren_a;
+
+      net(AddressWidth) address_b;
+      net(Width       ) q_b;
+    };
+    altsyncram() RAM;
+  }
+  //----------------------------------------------------------------------------
+
+  public{
+    input  net(AddressWidth) WrAddress;
+    input  net(Width       ) WrData;
+    input  net               WrEnable;
+
+    input  net(AddressWidth) RdAddress;
+    output net(Width       ) RdData;
+
+    RAM.address_a = WrAddress;
+    RAM.data_a    = WrData;
+    RAM.wren_a    = WrEnable;
+
+    RAM.address_b = RdAddress;
+    RdData        = RAM.q_b;
+  }
+}
+//------------------------------------------------------------------------------
+
