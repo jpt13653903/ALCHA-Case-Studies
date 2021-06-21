@@ -11,9 +11,9 @@ class DualPortMemory(net Clk, net Reset, num Width, num Depth){
 
     hdl() altsyncram (
       address_aclr_b                     = "NONE";
-      address_reg_b                      = "CLOCK0";
-      clock_enable_input_a               = "BYPASS",
-      clock_enable_input_b               = "BYPASS";
+      address_reg_b                      = "CLOCK1";
+      clock_enable_input_a               = "NORMAL",
+      clock_enable_input_b               = "NORMAL";
       clock_enable_output_b              = "BYPASS";
       intended_device_family             = 'target_series;
       lpm_type                           = "altsyncram";
@@ -32,12 +32,14 @@ class DualPortMemory(net Clk, net Reset, num Width, num Depth){
       width_b                            = Width;
       width_byteena_a                    = 1;
     ){
-      net clock0 = Clk;
-
+      net               clock0   = Clk;
+      net               clocken0 = 1;
       net(AddressWidth) address_a;
       net(Width       ) data_a;
       net               wren_a;
 
+      net               clock1   = Clk;
+      net               clocken1;
       net(AddressWidth) address_b;
       net(Width       ) q_b;
     };
@@ -51,12 +53,14 @@ class DualPortMemory(net Clk, net Reset, num Width, num Depth){
     input  net               WrEnable;
 
     input  net(AddressWidth) RdAddress;
+    input  net               RdEnable = 1;
     output net(Width       ) RdData;
 
     RAM.address_a = WrAddress;
     RAM.data_a    = WrData;
     RAM.wren_a    = WrEnable;
 
+    RAM.clocken1  = RdEnable;
     RAM.address_b = RdAddress;
     RdData        = RAM.q_b;
   }

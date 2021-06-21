@@ -1,0 +1,19 @@
+class DataStream(num Width){
+  net        SoP;
+  net        EoP;
+  net(Width) Data;
+  net        Valid;
+  net        Ready;
+}
+//------------------------------------------------------------------------------
+
+class IQ_Stream(num Width){
+  net        SoP;
+  net        EoP;
+  net(Width) I;
+  net(Width) Q;
+  net        Valid;
+  net        Ready;
+}
+//------------------------------------------------------------------------------
+

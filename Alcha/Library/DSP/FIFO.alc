@@ -1,0 +1,68 @@
+import "../Memory/DualPortMemory"
+//------------------------------------------------------------------------------
+
+class FIFO(net Clk, net Reset, num Width, num Length){
+  group Input{
+    input net SoP;
+    input net EoP;
+    input net(Width) Data;
+    input net Valid;
+  }
+  group Output{
+    output net SoP;
+    output net EoP;
+    output net(Width) Data;
+    output net Valid = 0;
+    input  net Ready = 1;
+  }
+  //----------------------------------------------------------------------------
+
+  private{
+    DualPortMemory(Clk, Reset, Width+2, Length) RAM;
+
+    RAM.WrAddress = 0;
+    RAM.WrData   := :(Input.SoP, Input.EoP, Input.Data);
+    RAM.WrEnable  = Input.Valid;
+
+    RAM.RdEnable  = Output.Ready;
+    RAM.RdAddress = 0;
+
+    num(RAM.RdAddress'width) NumItems = RAM.WrAddress - RAM.RdAddress;
+  }
+  //----------------------------------------------------------------------------
+
+  rtl(Clk, Reset){ // Input
+    if(Input.Valid) RAM.WrAddress++;
+  }
+  //----------------------------------------------------------------------------
+
+  net Valid = 0; // Takes care of the RAM read latency
+
+  rtl(Clk, Reset, Output.Ready){ // Output
+    :(Output.SoP, Output.EoP, Output.Data) := RAM.RdData;
+    Output.Valid = Valid;
+
+    if(NumItems != 0){
+      Valid = 1;
+      RAM.RdAddress++;
+    }else{
+      Valid = 0;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+
+DataStream operator| (Input, FIFO Queue){
+  Queue.Input.SoP   = Input.SoP;
+  Queue.Input.EoP   = Input.EoP;
+  Queue.Input.Data := Input.Data;
+  Queue.Input.Valid = Input.Valid;
+
+  result.SoP   = Queue.Output.SoP;
+  result.EoP   = Queue.Output.EoP;
+  result.Data := Queue.Output.Data;
+  result.Valid = Queue.Output.Valid;
+  Queue.Output.Ready = result.Ready;
+}
+//------------------------------------------------------------------------------
+

@@ -1,9 +1,18 @@
-import "Library/DSP/NCO"
+import "Library/DSP/Streams"
+import "Library/DSP/FIFO"
+import "Library/DSP/FFT"
+import "Library/DSP/Transpose"
+import "Library/DSP/AlphaFilter"
 //------------------------------------------------------------------------------
 
-NCO(DspClock, MasterReset | MasterTrigger) LO;
+net (18, 1) Alpha;
+Registers.Writeable(Alpha);
 
-LO.Frequency = -2.5e6/4;
-Registers.Writeable(LO.Frequency);
+// The Alpha Filter does not produce an output stream
+Receiver.Packet | FIFO       (DspClock, MasterReset,   18, 8192);
+                | FFT        (DspClock, MasterReset, 2500, 4096, "Hann");
+                | Transpose  (DspClock, MasterReset, 2048,  128);
+                | FFT        (DspClock, MasterReset,  128,  128, "Hann");
+                | AlphaFilter(DspClock, MasterReset,  128, 2048, Alpha);
 //------------------------------------------------------------------------------
 
