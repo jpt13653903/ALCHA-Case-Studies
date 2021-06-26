@@ -26,9 +26,8 @@ class FIFO(net Clk, net Reset, num Width, num Length){
 
     RAM.RdEnable  = Output.Ready;
     RAM.RdAddress = 0;
-
-    num(RAM.RdAddress'width) NumItems = RAM.WrAddress - RAM.RdAddress;
   }
+  num(RAM.RdAddress'width) NumItems = RAM.WrAddress - RAM.RdAddress;
   //----------------------------------------------------------------------------
 
   rtl(Clk, Reset){ // Input
