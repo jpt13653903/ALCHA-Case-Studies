@@ -1,19 +1,19 @@
-class DataStream(num Width){
-  net        SoP;
-  net        EoP;
-  net(Width) Data;
-  net        Valid;
-  net        Ready;
+class DataStream(num Width, num Fullscale = -1){
+  net                   SoP;
+  net                   EoP;
+  net(Width, Fullscale) Data;
+  net                   Valid = 0;
+  net                   Ready = 1;
 }
 //------------------------------------------------------------------------------
 
-class IQ_Stream(num Width){
-  net        SoP;
-  net        EoP;
-  net(Width) I;
-  net(Width) Q;
-  net        Valid;
-  net        Ready;
+class IQ_Stream(num Width, num Fullscale = -1){
+  net                   SoP;
+  net                   EoP;
+  net(Width, Fullscale) I;
+  net(Width, Fullscale) Q;
+  net                   Valid = 0;
+  net                   Ready = 1;
 }
 //------------------------------------------------------------------------------
 

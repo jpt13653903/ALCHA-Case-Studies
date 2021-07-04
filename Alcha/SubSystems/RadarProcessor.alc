@@ -1,22 +1,28 @@
 import "Library/DSP/Streams"
 import "Library/DSP/FIFO"
+import "Library/DSP/Window"
+import "Library/DSP/IQ_Window"
 import "Library/DSP/FFT"
+import "Library/DSP/RealFFT"
 import "Library/DSP/Transpose"
 import "Library/DSP/AlphaFilter"
 //------------------------------------------------------------------------------
 
-FIFO       (DspClock, MasterReset,   18, 8192        ) Queue;
-FFT        (DspClock, MasterReset, 2500, 4096, "Hann") RangeFFT;
-Transpose  (DspClock, MasterReset, 2048,  128        ) CornerTurn;
-FFT        (DspClock, MasterReset,  128,  128, "Hann") DopplerFFT;
-AlphaFilter(DspClock, MasterReset,  128, 2048        ) Filter;
+FIFO       (DspClock, MasterReset, 8192                ) Queue;
+Window     (DspClock, MasterReset, 2500, 16, 32, "Hann") RangeWindow;
+RealFFT    (DspClock, MasterReset, 4096                ) RangeFFT;
+Transpose  (DspClock, MasterReset, 2048,  128          ) CornerTurn;
+IQ_Window  (DspClock, MasterReset,  128, 32, 32, "Hann") DopplerWindow;
+FFT        (DspClock, MasterReset,  128                ) DopplerFFT;
+AlphaFilter(DspClock, MasterReset,  128, 2048          ) Filter;
 //------------------------------------------------------------------------------
 
+Registers.ReadOnly (Queue.NumItems);
 Registers.Writeable(Filter.Alpha);
-Registers.ReadOnly (FIFO  .NumItems);
 //------------------------------------------------------------------------------
 
 // The Alpha Filter does not produce an output stream
-Receiver.Packet | FIFO | FFT | CornerTurn | FFT | AlphaFilter;
+Receiver.Packet | Queue | RangeWindow | RangeFFT | CornerTurn
+                | DopplerWindow | DopplerFFT | Filter;
 //------------------------------------------------------------------------------
 

@@ -1,6 +1,5 @@
 import "Library/Timing/TriggerDelay"
 import "Library/Peripherals/ADC_and_BIM/ADS7056"
-import "Packetiser"
 //------------------------------------------------------------------------------
 
 ADS7056(DspClock, MasterReset) ADC;
@@ -17,10 +16,10 @@ rtl(DspClock) PacketTrigger_DSP = PacketTrigger.Output;
 //------------------------------------------------------------------------------
 
 group Packet{
-  net      SoP;
-  net      EoP;
-  net(-15) Data;
-  net      Valid = 0;
+  net         SoP;
+  net         EoP;
+  net(13, -1) Data;
+  net         Valid = 0;
 }
 
 private net(12) n;
@@ -34,10 +33,10 @@ fsm(DspClock, MasterReset){
     ;
 
     while(n < N){
-      Packet.SoP   = (n == 0),
-      Packet.EoP   = (n == N-1),
-      Packet.Data  = :(~ADC.Output.Data(13), ADC.Output.Data(12..0), 0@2),
-      Packet.Valid = ADC.Output.Valid,
+      Packet.SoP    = (n == 0),
+      Packet.EoP    = (n == N-1),
+      Packet.Data  := :(~ADC.Output.Data(13), ADC.Output.Data(12..0)),
+      Packet.Valid  = ADC.Output.Valid,
       if(ADC.Output.Valid) n++,
       ;
     }

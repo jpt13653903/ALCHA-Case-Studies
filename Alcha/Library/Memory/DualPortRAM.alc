@@ -1,4 +1,4 @@
-class DualPortMemory(net Clk, net Reset, num Width, num Depth){
+class DualPortRAM(net Clk, net Reset, num Width, num Depth){
   private{
     string RamBlockType;
     switch('target_series){
@@ -14,7 +14,9 @@ class DualPortMemory(net Clk, net Reset, num Width, num Depth){
       address_reg_b                      = "CLOCK1";
       clock_enable_input_a               = "NORMAL",
       clock_enable_input_b               = "NORMAL";
+      clock_enable_output_a              = "BYPASS";
       clock_enable_output_b              = "BYPASS";
+      indata_reg_b                       = "CLOCK1";
       intended_device_family             = 'target_series;
       lpm_type                           = "altsyncram";
       maximum_depth                      = 1024;
@@ -31,6 +33,7 @@ class DualPortMemory(net Clk, net Reset, num Width, num Depth){
       width_a                            = Width;
       width_b                            = Width;
       width_byteena_a                    = 1;
+      width_byteena_b                    = 1;
     ){
       net               clock0   = Clk;
       net               clocken0 = 1;

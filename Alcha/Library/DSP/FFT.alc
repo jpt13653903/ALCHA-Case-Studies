@@ -1,0 +1,56 @@
+import "../Memory/FullDualPortRAM"
+//------------------------------------------------------------------------------
+
+class FFT(net Clk, net Reset, num NumPoints){
+  assert(2**round(log2(NumPoints)) == NumPoints);
+
+  private{
+    DualPortROM    (Clk, Reset, 36, NumPoints) TwiddleFactors;
+    FullDualPortRAM(Clk, Reset, 80, NumPoints) Buffer;
+
+    !! Other private declarations
+  }
+  //----------------------------------------------------------------------------
+
+  IQ_Stream Run(Input, bool ComplexInput){
+    result = IQ_Stream(31, -1);
+    result.I'overflow = "clip";
+    result.Q'overflow = "clip";
+
+    num BufferFullScale;
+    if(ComplexInput) BufferFullScale = Input.I   'fullscale * NumPoints;
+    else             BufferFullScale = Input.Data'fullscale * NumPoints;
+
+    struct ComplexData{
+      net(39, BufferFullScale) I, Q;
+    }
+    ComplexData Buffer_WrData_A, Buffer_WrData_B;
+    ComplexData Buffer_RdData_A, Buffer_RdData_B;
+
+    Buffer.WrData_A := :(Buffer_WrData_A.I, Buffer_WrData_A.Q);
+    Buffer.WrData_B := :(Buffer_WrData_B.I, Buffer_WrData_B.Q);
+    :(Buffer_RdData_A.I, Buffer_RdData_A.Q) := Buffer.RdData_A;
+    :(Buffer_RdData_B.I, Buffer_RdData_B.Q) := Buffer.RdData_B;
+
+    !! Scale the input data with NumPoints and
+    !! zero-pad as required
+
+    !! Run the engine with each butterfly scaled by 0.5
+    !! i.e. WrData = (Even + Twiddle*Odd) / 2
+
+    !! Stream the output in bit-reversed order
+    !! For real input data, only stream out the first half of the result
+  }
+}
+//------------------------------------------------------------------------------
+
+DataStream operator| (DataStream Input, FFT Engine){
+  return Engine.Run(Input, false);
+}
+//------------------------------------------------------------------------------
+
+IQ_Stream operator| (IQ_Stream Input, FFT Engine){
+  return Engine.Run(Input, true);
+}
+//------------------------------------------------------------------------------
+

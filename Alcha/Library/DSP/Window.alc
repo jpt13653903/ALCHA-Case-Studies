@@ -1,0 +1,90 @@
+import "../Memory/DualPortROM"
+//------------------------------------------------------------------------------
+
+class Window(net Clk, net Reset, num Length, string Function){
+  DualPortROM(Clk, Reset, 18, Length) ROM;
+
+  private{
+    num n[Length] = 0..(Length-1);
+
+    switch(Function){
+      case("Hann"){
+        ROM.Initial = (sin(pi*n/Length))**2;
+      }
+      case("Hamming"){
+        num a = 25/46;
+        ROM.Initial = a - (1-a)*cos(2*pi*n/Length);
+      }
+      !! Other windows
+      default{ // Rectangular
+        ROM.Initial = 1;
+      }
+    }
+    //--------------------------------------------------------------------------
+
+    num Sum = 0;
+    for(c in ROM.Initial) Sum += c;
+    ROM.Initial /= Sum;
+
+    num Max = 1e-24;
+    for(c in ROM.Initial){ if(Max < c) Max = c; }
+
+    num Fullscale = 1;
+    while(Fullscale > Max) Fullscale /= 2;
+    while(Fullscale < Max) Fullscale *= 2;
+
+    ROM.Initial = round(ROM.Initial * (1p18 / Fullscale));
+    net(Width, Fullscale) Coefficient := ROM.Data_A;
+  }
+  //----------------------------------------------------------------------------
+
+  auto Run(Input, bool Complex){
+    net WaitForROM = 1;
+    net Ready      = !WaitForROM;
+
+    if(Complex) result = IQ_Stream (Input.Width + 18, -Fullscale);
+    else        result = DataStream(Input.Width + 18, -Fullscale);
+
+    Input.Ready     =  result.Ready & Ready;
+    ROM.ClkEnable_A = (result.Ready & Input.Valid) | WaitForROM;
+
+    rtl(Clk, Reset, result.Ready){
+      if(Ready){
+        result.SoP   = Input.SoP;
+        result.EoP   = Input.EoP;
+        result.Valid = Input.Valid;
+        if(Complex){
+          result.I    = Input.I    * Coefficient;
+          result.Q    = Input.Q    * Coefficient;
+        }else{
+          result.Data = Input.Data * Coefficient;
+        }
+      }
+      if(WaitForROM){
+        ROM.Address_A++;
+        WaitForROM = 0;
+      }else{
+        if(Input.Valid){
+          if(Input.EoP){
+            ROM.Address_A = 0;
+            WaitForROM    = 1;
+          }else{
+            ROM.Address_A++;
+          }
+        }
+      }
+    }
+  }
+}
+//------------------------------------------------------------------------------
+
+DataStream operator| (DataStream Input, Window Instance){
+  return Instance.Run(Input, false);
+}
+//------------------------------------------------------------------------------
+
+IQ_Stream operator| (IQ_Stream Input, Window Instance){
+  return Instance.Run(Input, true);
+}
+//------------------------------------------------------------------------------
+

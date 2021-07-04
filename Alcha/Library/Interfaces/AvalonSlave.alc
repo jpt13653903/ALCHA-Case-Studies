@@ -3,7 +3,18 @@ import "Library/Interfaces/AvalonInterface"
 
 class AvalonSlave(net Clock, net Reset, num Width, num Depth, num MaxBurstCount = 1):
       AvalonInterface(Width, Depth, MaxBurstCount){
-  // No additional stuff required -- the Clock and Reset is sufficient
+
+  void Attach(Master){
+    !! Add the master to the list of masters
+  }
+
+  void finally(){
+    !! Finalise the arbitration circuit
+
+    // Arbitration is performed based on the Read and Write strobes, as well
+    // as the burst count.  The other modules' WaitRequest line is pulled high
+    // when there is another master busy on the bus.
+  }
 }
 //------------------------------------------------------------------------------
 

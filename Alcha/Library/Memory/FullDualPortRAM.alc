@@ -1,0 +1,88 @@
+class DualPortRAM(net Clk, net Reset, num Width, num Depth){
+  private{
+    string RamBlockType;
+    switch('target_series){
+      case("MAX 10"   ) RamBlockType = "M9K";
+      case("Cyclone V") RamBlockType = "M10K";
+      case("Arria 10" ) RamBlockType = "M20K";
+      default           assert(false);
+    }
+    num AddressWidth = ceil(log2(Depth));
+
+    hdl() altsyncram (
+      address_aclr_b                     = "NONE";
+      address_reg_b                      = "CLOCK1";
+      clock_enable_input_a               = "NORMAL",
+      clock_enable_input_b               = "NORMAL";
+      clock_enable_output_a              = "BYPASS";
+      clock_enable_output_b              = "BYPASS";
+      indata_reg_b                       = "CLOCK1";
+      intended_device_family             = 'target_series;
+      lpm_type                           = "altsyncram";
+      maximum_depth                      = 1024;
+      numwords_a                         = Depth;
+      numwords_b                         = Depth;
+      operation_mode                     = "BIDIR_DUAL_PORT";
+      outdata_aclr_a                     = "NONE";
+      outdata_aclr_b                     = "NONE";
+      outdata_reg_a                      = "UNREGISTERED";
+      outdata_reg_b                      = "UNREGISTERED";
+      power_up_uninitialized             = "FALSE";
+      ram_block_type                     = RamBlockType;
+      read_during_write_mode_mixed_ports = "DONT_CARE";
+      read_during_write_mode_port_a      = "NEW_DATA_NO_NBE_READ",
+      read_during_write_mode_port_b      = "NEW_DATA_NO_NBE_READ",
+      widthad_a                          = AddressWidth;
+      widthad_b                          = AddressWidth;
+      width_a                            = Width;
+      width_b                            = Width;
+      width_byteena_a                    = 1;
+      width_byteena_b                    = 1;
+      wrcontrol_wraddress_reg_b          = "CLOCK1";
+    ){
+      net               clock0 = Clk;
+      net               clocken0;
+      net(AddressWidth) address_a;
+      net(Width       ) data_a;
+      net               wren_a;
+      net(Width       ) q_a;
+
+      net               clock1 = Clk;
+      net               clocken1;
+      net(AddressWidth) address_b;
+      net(Width       ) data_b;
+      net               wren_b;
+      net(Width       ) q_b;
+    };
+    altsyncram() RAM;
+  }
+  //----------------------------------------------------------------------------
+
+  public{
+    input  net               ClkEnable_A;
+    input  net(AddressWidth) Address_A;
+    input  net(Width       ) WrData_A;
+    input  net               WrEnable_A;
+    output net(Width       ) RdData_A;
+
+    input  net               ClkEnable_B;
+    input  net(AddressWidth) Address_B;
+    input  net(Width       ) WrData_B;
+    input  net               WrEnable_B;
+    output net(Width       ) RdData_B;
+
+    RAM.clocken0  = ClkEnable_A;
+    RAM.address_a = Address_A;
+    RAM.data_a    = WrData_A;
+    RAM.wren_a    = WrEnable_A;
+    RdData_A      = RAM.q_a;
+
+    RAM.clocken1  = ClkEnable_B;
+    RAM.address_b = Address_B;
+    RAM.data_b    = WrData_B;
+    RAM.wren_b    = WrEnable_B;
+    RdData_B      = RAM.q_b;
+  }
+}
+//------------------------------------------------------------------------------
+

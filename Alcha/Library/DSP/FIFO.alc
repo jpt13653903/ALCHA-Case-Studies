@@ -1,24 +1,14 @@
-import "../Memory/DualPortMemory"
+import "../Memory/DualPortRAM"
 //------------------------------------------------------------------------------
 
-class FIFO(net Clk, net Reset, num Width, num Length){
-  group Input{
-    input net SoP;
-    input net EoP;
-    input net(Width) Data;
-    input net Valid;
-  }
-  group Output{
-    output net SoP;
-    output net EoP;
-    output net(Width) Data;
-    output net Valid = 0;
-    input  net Ready = 1;
-  }
-  //----------------------------------------------------------------------------
+class FIFO(net Clk, net Reset, num Length){
+  DataStream Run(Input){
+    num Width = Input.Data'width;
 
-  private{
-    DualPortMemory(Clk, Reset, Width+2, Length) RAM;
+    DualPortRAM(Clk, Reset, Width+3, Length) RAM;
+
+    // Create new stream instance for the output
+    result = DataStream(Width, -1);
 
     RAM.WrAddress = 0;
     RAM.WrData   := :(Input.SoP, Input.EoP, Input.Data);
@@ -26,42 +16,31 @@ class FIFO(net Clk, net Reset, num Width, num Length){
 
     RAM.RdEnable  = Output.Ready;
     RAM.RdAddress = 0;
-  }
-  num(RAM.RdAddress'width) NumItems = RAM.WrAddress - RAM.RdAddress;
-  //----------------------------------------------------------------------------
 
-  rtl(Clk, Reset){ // Input
-    if(Input.Valid) RAM.WrAddress++;
-  }
-  //----------------------------------------------------------------------------
+    rtl(Clk, Reset){ // Input
+      if(Input.Valid) RAM.WrAddress++;
+    }
 
-  net Valid = 0; // Takes care of the RAM read latency
+    net Valid = 0; // Takes care of the RAM read latency
+    num(RAM.RdAddress'width) NumItems = RAM.WrAddress - RAM.RdAddress;
 
-  rtl(Clk, Reset, Output.Ready){ // Output
-    :(Output.SoP, Output.EoP, Output.Data) := RAM.RdData;
-    Output.Valid = Valid;
+    rtl(Clk, Reset, result.Ready){ // Output
+      :(result.SoP, result.EoP, result.Data) := RAM.RdData;
+      result.Valid = Valid;
 
-    if(NumItems != 0){
-      Valid = 1;
-      RAM.RdAddress++;
-    }else{
-      Valid = 0;
+      if(NumItems != 0){
+        Valid = 1;
+        RAM.RdAddress++;
+      }else{
+        Valid = 0;
+      }
     }
   }
 }
 //------------------------------------------------------------------------------
 
 DataStream operator| (Input, FIFO Queue){
-  Queue.Input.SoP   = Input.SoP;
-  Queue.Input.EoP   = Input.EoP;
-  Queue.Input.Data := Input.Data;
-  Queue.Input.Valid = Input.Valid;
-
-  result.SoP   = Queue.Output.SoP;
-  result.EoP   = Queue.Output.EoP;
-  result.Data := Queue.Output.Data;
-  result.Valid = Queue.Output.Valid;
-  Queue.Output.Ready = result.Ready;
+  return Queue.Run(Input);
 }
 //------------------------------------------------------------------------------
 
