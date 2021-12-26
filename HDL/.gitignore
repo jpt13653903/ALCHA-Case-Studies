@@ -1,0 +1,12 @@
+.vs
+.vscode
+*.swp
+*.bak
+~*
+
+*.qws
+db
+incremental_db
+greybox_tmp
+output_files
+

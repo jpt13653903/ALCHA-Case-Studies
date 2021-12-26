@@ -24,7 +24,23 @@ class ADS7056(net Clk, net Reset){
     SClk = this.SClk;
     Data = SDO;
 
-    !! Assign the device-specific timing parameters
+    SClk'create_generated_clock = <divide_by = 2, source = Clk>;
+    
+    // The state machine takes care of the actual sample and hold timing, so
+    // this just needs to make sure it's not ridiculously out of place.  The
+    // constraints below ensures that the signals change within a 5 μs window,
+    // 3 ns after the clock edge.
+    nCS'set_output_delay'max +=  0e-9; // Setup
+    nCS'set_output_delay'min += -3e-9; // Hold
+
+    // The actual IC delay is 2.5 to 10 ns, but the state machine ensures that
+    // the data is sampled just before making SClk high.
+    SDO'set_input_delay'min +=  2.5e-9;
+    SDO'set_input_delay'max += 10.0e-9;
+
+    SDO'set_multicycle_path'to    = Clk;
+    SDO'set_multicycle_path'setup = 2;
+    SDO'set_multicycle_path'hold  = 1;
   }
   //----------------------------------------------------------------------------
 
@@ -39,7 +55,7 @@ class ADS7056(net Clk, net Reset){
       default     SClk = 0; // Reset in case something went wrong
     }
 
-    if(SClk == 0) Shift = :(Shift[13..0], Data);
+    if(SClk == 0) Shift = :(Shift[12..0], Data);
 
     if(Count == 32){
       Output.Data  = Shift;

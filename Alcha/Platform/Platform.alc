@@ -22,7 +22,15 @@ group ADC{ // ADS7056
   alias SClk = DE0.Arduino.IO[6];
   alias Data = DE0.Arduino.IO[7];
 
-  !! Assign the PCB-specific timing parameters
+  SClk'frequency = 60e6;
+
+  nCS'set_output_delay'clock       = SClk;
+  nCS'set_output_delay'delay       = 0e-3; // Source-synchronous
+  nCS'set_output_delay'uncertainty = 50e-12;
+
+  Data'set_input_delay'clock       = SClk;
+  Data'set_input_delay'delay       = 100e-3 / 2e8;
+  Data'set_input_delay'uncertainty = 50e-12;
 }
 //------------------------------------------------------------------------------
 
