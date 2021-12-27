@@ -35,6 +35,3 @@ import "SubSystems/ReceiverAbstraction" as Receiver;
 import "SubSystems/RadarProcessor" as Processor;
 //------------------------------------------------------------------------------
 
-import "SubSystems/DataStreamer" as Streamer;
-//------------------------------------------------------------------------------
-

@@ -11,9 +11,9 @@ class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50):
     assert(Channel >= 0 & Channel < 4);
 
     switch(Type){
-      case(Voltage     ) ControlRegs[(4*Channel+3)..(4*Channel)] = 0;
-      case(Differential) ControlRegs[(4*Channel+3)..(4*Channel)] = 1;
-      case(Temperature ) ControlRegs[(4*Channel+3)..(4*Channel)] = 2;
+      case(Voltage     ) Control[(4*Channel+3)..(4*Channel)] = 0;
+      case(Differential) Control[(4*Channel+3)..(4*Channel)] = 1;
+      case(Temperature ) Control[(4*Channel+3)..(4*Channel)] = 2;
     }
   }
 

@@ -27,7 +27,7 @@ fsm(DspClock, MasterReset){
     }
 
     loop{ // Write the packet
-      Buffer.WriteData := Packet.Data,
+      Buffer.WriteData := :(Packet.Data, 0@2), // Extend to 16-bit
       Buffer.Write      = Packet.Valid,
       if(Packet.Valid){
         Buffer.Address++,

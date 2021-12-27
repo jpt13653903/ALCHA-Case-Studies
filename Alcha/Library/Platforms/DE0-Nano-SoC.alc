@@ -87,34 +87,38 @@ group HPS{
   //----------------------------------------------------------------------------
 
   group<standard = "SSTL-15 Class I"> DDR3{
-    pin(15) <location = [ "G23" , "C24" , "D24", "B24",
-                          "A24" , "F25" , "F26", "B26",
-                          "C26" , "J20" , "J21", "D26",
-                          "E26" , "B28" , "C28"        ]> Address;
-    pin( 3) <location = [ "G25" , "H25" , "A27"        ]> Bank;
-    pin( 4) <location = [ "AB28", "W28" , "P28", "G28" ]> DataMask;
-    pin(32) <location = [ "AA27", "Y27" , "T24", "R24",
-                          "W26" , "AA28", "R25", "R26",
-                          "V27" , "R27" , "N27", "N26",
-                          "U28" , "T28" , "N25", "N24",
-                          "N28" , "M28" , "M26", "M27",
-                          "J28" , "J27" , "L25", "K25",
-                          "F28" , "G27" , "K26", "J26",
-                          "D27" , "E28" , "J24", "J25" ]> Data;
-
-    group<standard = "Differential 1.5-V SSTL Class I">{
-      pin    <location =   "N21-N20"                                   > Clock;
-      pin(4) <location = [ "U19-T20", "T19-T18", "R19-R18", "R17-R16" ]> DataStrobe;
+    group<output_termination = "SERIES 50 OHM WITH CALIBRATION">{
+      group<input_termination = "PARALLEL 50 OHM WITH CALIBRATION">{
+        pin(32) <location = [ "AA27", "Y27" , "T24", "R24",
+                              "W26" , "AA28", "R25", "R26",
+                              "V27" , "R27" , "N27", "N26",
+                              "U28" , "T28" , "N25", "N24",
+                              "N28" , "M28" , "M26", "M27",
+                              "J28" , "J27" , "L25", "K25",
+                              "F28" , "G27" , "K26", "J26",
+                              "D27" , "E28" , "J24", "J25" ]> Data;
+        pin(4) <location = [ "U19-T20", "T19-T18", "R19-R18", "R17-R16" ],
+                standard = "Differential 1.5-V SSTL Class I"> DataStrobe;
+      }
+      pin( 4) <location = [ "AB28", "W28" , "P28", "G28" ]> DataMask;
     }
+    group<output_termination = "SERIES 50 OHM WITHOUT CALIBRATION">{
+      pin(15) <location = [ "G23" , "C24" , "D24", "B24",
+                            "A24" , "F25" , "F26", "B26",
+                            "C26" , "J20" , "J21", "D26",
+                            "E26" , "B28" , "C28"        ]> Address;
+      pin( 3) <location = [ "G25" , "H25" , "A27"        ]> Bank;
 
-    pin <location = "A26"> nColumnAddressStrobe;
-    pin <location = "L28">  ClockEnable;
-    pin <location = "L21"> nChipSelect;
-    pin <location = "D28">  OnDieTermination;
-    pin <location = "A25"> nRowAddressStrobe;
-    pin <location = "V28"> nReset;
-    pin <location = "E25"> nWriteEnable;
-    pin <location = "D25", standard = "1.5 V"> RZQ;
+      pin <location = "N21-N20", standard = "Differential 1.5-V SSTL Class I"> Clock;
+      pin <location = "A26"> nColumnAddressStrobe;
+      pin <location = "L28">  ClockEnable;
+      pin <location = "L21"> nChipSelect;
+      pin <location = "D28">  OnDieTermination;
+      pin <location = "A25"> nRowAddressStrobe;
+      pin <location = "V28"> nReset;
+      pin <location = "E25"> nWriteEnable;
+    }
+    pin <location = "D25"> RZQ;
   }
   //----------------------------------------------------------------------------
 

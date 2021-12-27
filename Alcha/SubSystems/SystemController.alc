@@ -186,7 +186,7 @@ class SystemController_Class{
     //--------------------------------------------------------------------------
 
     HPS_Pins.LED               .hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO53);
-    HPS_Pins.KEY               .hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO54);
+    HPS_Pins.Key               .hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO54);
     HPS_Pins.G_Sensor.Interrupt.hdl_map(SoC_System.hps_io_hps_io_gpio_inst_GPIO61);
     //--------------------------------------------------------------------------
 
