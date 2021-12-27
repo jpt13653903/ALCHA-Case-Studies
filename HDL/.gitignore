@@ -5,8 +5,11 @@
 ~*
 
 *.qws
+*.sopcinfo
 db
 incremental_db
 greybox_tmp
 output_files
-
+hps_isw_handoff
+hps_sdram_p0_summary.csv
+c5_pin_model_dump.txt
