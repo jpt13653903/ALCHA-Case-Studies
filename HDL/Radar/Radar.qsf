@@ -57,20 +57,28 @@ set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_RO
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 #-------------------------------------------------------------------------------
 
+set_global_assignment -name PRE_FLOW_SCRIPT_FILE "quartus_sh:../Library/Misc/FirmwareVersion.tcl"
+#-------------------------------------------------------------------------------
+
 set_global_assignment -name QSYS_FILE ../SoC_System/SoC_System.qsys
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/ADF4159.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/ADS7056.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/AvalonArbiter.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/DelayedReset.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/FirmwareVersion.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/LTC2991.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/MutEx.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/PLL_CycloneV.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../Library/TriggerDelay.v
+
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Clocking_and_Reset/DelayedReset.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Clocking_and_Reset/PLL_CycloneV.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Clocking_and_Reset/WhatchDog.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Comms/I2C/I2C.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/DSP/NCO.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/DSP/SinCos.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Interfaces/AvalonArbiter.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Misc/FirmwareVersion.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Misc/MutEx.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Peripherals/ADC_and_BIM/ADS7056.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Peripherals/ADC_and_BIM/LTC2991.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Peripherals/Synth_and_DDS/ADF4159.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Timing/TriggerDelay.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../Library/Timing/TriggerGen.v
 
 set_global_assignment -name SYSTEMVERILOG_FILE SubSystems/DebugStreamer.v
 set_global_assignment -name SYSTEMVERILOG_FILE SubSystems/HardwareControl.v
-set_global_assignment -name SYSTEMVERILOG_FILE SubSystems/MasterTriggerGen.v
 set_global_assignment -name SYSTEMVERILOG_FILE SubSystems/RadarProcessor.v
 set_global_assignment -name SYSTEMVERILOG_FILE SubSystems/ReceiverAbstraction.v
 set_global_assignment -name SYSTEMVERILOG_FILE SubSystems/RegistersDecoder.v
