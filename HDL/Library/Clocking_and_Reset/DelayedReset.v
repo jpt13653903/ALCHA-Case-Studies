@@ -22,7 +22,7 @@ always @(posedge ipClk) begin
     opResult <= 1;
 
   end else begin
-    if(Count != Delay_cycles) Count++;
+    if(Count != Delay_cycles) Count <= Count + 1;
     else opResult <= 0;
   end
 end

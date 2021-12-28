@@ -168,26 +168,26 @@ wire [255:0]Filter_ReadData;
 wire        Filter_ReadValid;
 
 AlphaFilter Filter(
-  .ipClk  (ipClk  ),
-  .ipReset(ipReset),
+  .ipClk              (ipClk                         ),
+  .ipReset            (ipReset                       ),
 
-  .ipAlpha    (ipWrRegisters.Filter_Alpha    ),
-  .opWrAddress(opRdRegisters.Filter_WrAddress),
+  .ipAlpha            (ipWrRegisters.Filter_Alpha    ),
+  .opWrAddress        (opRdRegisters.Filter_WrAddress),
 
-  .ipInput(DopplerFFT_Output),
-  .opReady(Filter_Ready     ),
+  .ipInput            (DopplerFFT_Output             ),
+  .opReady            (Filter_Ready                  ),
 
-  .ipSDRAM_WaitRequest(Filter_WaitRequest),
-  .opSDRAM_Address    (Filter_Address    ),
-  .opSDRAM_ByteEnable (Filter_ByteEnable ),
-  .opSDRAM_BurstCount (Filter_BurstCount ),
+  .ipSDRAM_WaitRequest(Filter_WaitRequest            ),
+  .opSDRAM_Address    (Filter_Address                ),
+  .opSDRAM_ByteEnable (Filter_ByteEnable             ),
+  .opSDRAM_BurstCount (Filter_BurstCount             ),
 
-  .opSDRAM_WriteData  (Filter_WriteData  ),
-  .opSDRAM_Write      (Filter_Write      ),
+  .opSDRAM_WriteData  (Filter_WriteData              ),
+  .opSDRAM_Write      (Filter_Write                  ),
 
-  .opSDRAM_Read       (Filter_Read       ),
-  .ipSDRAM_ReadData   (Filter_ReadData   ),
-  .ipSDRAM_ReadValid  (Filter_ReadValid  )
+  .opSDRAM_Read       (Filter_Read                   ),
+  .ipSDRAM_ReadData   (Filter_ReadData               ),
+  .ipSDRAM_ReadValid  (Filter_ReadValid              )
 );
 //------------------------------------------------------------------------------
 

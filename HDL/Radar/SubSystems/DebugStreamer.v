@@ -32,7 +32,7 @@ always @(posedge ipClk) begin
   end else begin
     case(State)
       Idle: begin
-        if(opWrite) opAddress++;
+        if(opWrite) opAddress   <= opAddress + 1;
         else        opWrAddress <= opAddress;
 
         opWriteData <= {ipPacket.Data, 2'b0};
@@ -50,7 +50,7 @@ always @(posedge ipClk) begin
         opWriteData <= {ipPacket.Data, 2'b0};
         opWrite     <=  ipPacket.Valid;
         if(ipPacket.Valid) begin
-          opAddress++;
+          opAddress <= opAddress + 1;
           if(ipPacket.EoP) State <= Idle;
         end
       end

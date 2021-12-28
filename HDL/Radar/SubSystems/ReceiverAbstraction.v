@@ -101,7 +101,7 @@ always @(posedge ipDspClk) begin
           State <= Idle;
         end
 
-        if(ADC_Valid) n++;
+        if(ADC_Valid) n <= n + 1;
       end
       //------------------------------------------------------------------------
 

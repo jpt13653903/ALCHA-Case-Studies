@@ -346,7 +346,7 @@ FirmwareVersion #(1, 0) Version(
 
 wire MasterTrigger;
 
-MasterTriggerGen MasterTrigger_Inst(
+TriggerGen MasterTriggerGen(
   .ipClk    (ControlClock                    ),
   .ipReset  (MasterReset                     ),
 
