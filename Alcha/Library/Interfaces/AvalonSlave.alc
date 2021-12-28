@@ -1,4 +1,4 @@
-import "Library/Interfaces/AvalonInterface"
+import "Library/Interfaces/AvalonInterface";
 //------------------------------------------------------------------------------
 
 class AvalonSlave(net Clock, net Reset, num Width, num Depth, num MaxBurstCount = 1):

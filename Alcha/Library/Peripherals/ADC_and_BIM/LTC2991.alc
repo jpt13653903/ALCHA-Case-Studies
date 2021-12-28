@@ -1,4 +1,4 @@
-import "Library/Comms/I2C/I2C"
+import "Library/Comms/I2C/I2C";
 //------------------------------------------------------------------------------
 
 class LTC2991(net Clk, net Reset, net(3) Address, num Baud_kHz = 50):

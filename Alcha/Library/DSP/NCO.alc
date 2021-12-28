@@ -1,4 +1,4 @@
-import "SinCos"
+import "SinCos";
 //------------------------------------------------------------------------------
 
 class NCO(net Clk, net Reset){

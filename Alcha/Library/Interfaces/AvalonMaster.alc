@@ -1,4 +1,4 @@
-import "Library/Interfaces/AvalonInterface"
+import "Library/Interfaces/AvalonInterface";
 //------------------------------------------------------------------------------
 
 class AvalonMaster(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){

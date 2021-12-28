@@ -65,12 +65,12 @@ class I2C(net Clk, net Reset, num Baud_kHz = 50){
       }else{
         DataOut = 1;
         ClkOut  = 1;
-        ClkOut  = 0,
         if(DataIn != Ack){
           Error = 1,
           return;
         }else{
-          Error = 0;
+          ClkOut = 0,
+          Error  = 0;
         }
       }
 

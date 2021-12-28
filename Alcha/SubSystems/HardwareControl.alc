@@ -1,8 +1,8 @@
 // Stuff like BIM and BIT, RF switches, etc.
 
-import "Library/Misc/MutEx"
-import "Library/Timing/TriggerDelay"
-import "Library/Peripherals/ADC_and_BIM/LTC2991"
+import "Library/Misc/MutEx";
+import "Library/Timing/TriggerDelay";
+import "Library/Peripherals/ADC_and_BIM/LTC2991";
 //------------------------------------------------------------------------------
 
 MutEx(ControlClock, MasterReset) I2C_MutEx;

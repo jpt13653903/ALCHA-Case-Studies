@@ -11,9 +11,9 @@ class FirmwareVersion(num Major, num Minor){
 
   output{
     net(32) Version = (Major << 16) | Minor;
-    net(32) Date    = HexToNet(__DATE__);
-    net(28) Time    = HexToNet(__TIME__);
-    net(32) GitHash = HexToNet(shell("git rev-parse --short=8 HEAD"));
+    net(32) Date    = HexToNum(__DATE__);
+    net(28) Time    = HexToNum(__TIME__);
+    net(32) GitHash = HexToNum(shell("git rev-parse --short=8 HEAD"));
   }
 }
 //------------------------------------------------------------------------------

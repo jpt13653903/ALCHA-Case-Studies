@@ -1,4 +1,4 @@
-import "../Memory/DualPortRAM"
+import "../Memory/DualPortRAM";
 //------------------------------------------------------------------------------
 
 class FIFO(net Clk, net Reset, num Length){

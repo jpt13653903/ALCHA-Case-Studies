@@ -1,4 +1,4 @@
-import "Library/Timing/TriggerGen"
+import "Library/Timing/TriggerGen";
 //------------------------------------------------------------------------------
 
 TriggerGen(ControlClock, MasterTrigger) MasterTriggerGen;

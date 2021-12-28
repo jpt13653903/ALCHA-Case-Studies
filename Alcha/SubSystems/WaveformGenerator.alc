@@ -1,5 +1,5 @@
-import "Library/Timing/TriggerDelay"
-import "Library/Peripherals/Synth_and_DDS/ADF4159"
+import "Library/Timing/TriggerDelay";
+import "Library/Peripherals/Synth_and_DDS/ADF4159";
 //------------------------------------------------------------------------------
 
 TriggerDelay(ControlClock, MasterReset, MasterTrigger) SynthTrigger;

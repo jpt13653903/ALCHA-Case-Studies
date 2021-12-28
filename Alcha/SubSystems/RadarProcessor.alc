@@ -1,9 +1,9 @@
-import "Library/DSP/Streams"
-import "Library/DSP/FIFO"
-import "Library/DSP/Window"
-import "Library/DSP/FFT"
-import "Library/DSP/Transpose"
-import "Library/DSP/AlphaFilter"
+import "Library/DSP/Streams";
+import "Library/DSP/FIFO";
+import "Library/DSP/Window";
+import "Library/DSP/FFT";
+import "Library/DSP/Transpose";
+import "Library/DSP/AlphaFilter";
 //------------------------------------------------------------------------------
 
 FIFO       (DspClock, MasterReset, 8192                ) Queue;

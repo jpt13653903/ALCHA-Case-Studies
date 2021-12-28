@@ -1,4 +1,4 @@
-import "../Memory/DualPortROM"
+import "../Memory/DualPortROM";
 //------------------------------------------------------------------------------
 
 class Window(net Clk, net Reset, num Length, string Function){

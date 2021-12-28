@@ -1,5 +1,5 @@
-import "Library/Timing/TriggerDelay"
-import "Library/Peripherals/ADC_and_BIM/ADS7056"
+import "Library/Timing/TriggerDelay";
+import "Library/Peripherals/ADC_and_BIM/ADS7056";
 //------------------------------------------------------------------------------
 
 ADS7056(DspClock, MasterReset) ADC;

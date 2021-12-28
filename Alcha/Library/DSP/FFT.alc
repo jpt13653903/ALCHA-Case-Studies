@@ -1,4 +1,4 @@
-import "../Memory/FullDualPortRAM"
+import "../Memory/FullDualPortRAM";
 //------------------------------------------------------------------------------
 
 class FFT(net Clk, net Reset, num NumPoints){
