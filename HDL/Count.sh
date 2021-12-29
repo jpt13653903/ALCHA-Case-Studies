@@ -10,6 +10,7 @@ py ../Python/LoC\ Counter/LoC_Counter.py \
     Radar/*.v                            \
     Radar/*.qsf                          \
     Radar/*.sdc                          \
+    Radar/Platform/*.vh                  \
     $SubSystems
 echo ""
 echo ""
@@ -19,10 +20,10 @@ echo "Verilog: Top-level Project"
 echo ""
 
 Files="        Radar/Radar.v"
+Files=" $Files Library/Platforms/DE0-Nano-SoC.vh"
 Files=" $Files Radar/Radar.qsf"
 Files=" $Files Radar/Radar.sdc"
 Files=" $Files Radar/Platform/Platform.vh"
-Files=" $Files Library/Platforms/DE0-Nano-SoC.vh"
 
 py ../Python/LoC\ Counter/LoC_Counter.py $Files
 echo ""
@@ -32,18 +33,20 @@ echo ""
 echo "Verilog: Library Modules"
 echo ""
 
-Files="        Library/Clocking_and_Reset/DelayedReset.v"
-Files=" $Files Library/Clocking_and_Reset/PLL_CycloneV.v"
-Files=" $Files Library/Clocking_and_Reset/WatchDog.v"
-
+Files="        Library/Peripherals/Synth_and_DDS/ADF4159.v"
+Files=" $Files Library/Peripherals/Synth_and_DDS/ADF4159.py"
+Files=" $Files Library/Peripherals/ADC_and_BIM/ADS7056.v"
+Files=" $Files Library/Interfaces/AvalonArbiter.v"
+Files=" $Files Library/Clocking_and_Reset/DelayedReset.v"
 Files=" $Files Library/Comms/I2C/I2C.v"
-Files=" $Files Library/DSP/NCO.v"
-Files=" $Files Library/DSP/SinCos.v"
-
+Files=" $Files Library/Peripherals/ADC_and_BIM/LTC2991.v"
 Files=" $Files Library/Misc/MutEx.v"
-
-Files=" $Files Library/Timing/TriggerGen.v"
+Files=" $Files Library/DSP/NCO.v"
+Files=" $Files Library/Clocking_and_Reset/PLL_CycloneV.v"
+Files=" $Files Library/DSP/SinCos.v"
 Files=" $Files Library/Timing/TriggerDelay.v"
+Files=" $Files Library/Timing/TriggerGen.v"
+Files=" $Files Library/Clocking_and_Reset/WatchDog.v"
 
 py ../Python/LoC\ Counter/LoC_Counter.py $Files
 echo ""
@@ -62,8 +65,8 @@ Files=" $Files Library/DSP/FIFO.v"
 Files=" $Files Library/DSP/Window.v"
 Files=" $Files Library/DSP/Window.py"
 Files=" $Files Library/DSP/RealFFT.v"
-Files=" $Files Library/DSP/Transpose.v"
 Files=" $Files Library/DSP/FFT.v"
+Files=" $Files Library/DSP/Transpose.v"
 Files=" $Files Library/DSP/AlphaFilter.v"
 
 py ../Python/LoC\ Counter/LoC_Counter.py $Files
@@ -82,6 +85,7 @@ Files=" $Files Library/Misc/FirmwareVersion.tcl"
 
 Files=" $Files Radar/SubSystems/HardwareControl.v"
 Files=" $Files Radar/SubSystems/WaveformGenerator.v"
+Files=" $Files Radar/SubSystems/WaveformGenerator.py"
 Files=" $Files Radar/SubSystems/ReceiverAbstraction.v"
 Files=" $Files Radar/SubSystems/DebugStreamer.v"
 Files=" $Files Radar/SubSystems/RadarProcessor.v"

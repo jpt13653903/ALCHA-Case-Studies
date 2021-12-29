@@ -4,7 +4,7 @@ class PLL_CycloneV(net Clk, net Reset, Output_MHz){
     num N = Output_MHz'length;
     num OutputFreq[17];
 
-    for(num n = 0; n < 17; n++){
+    for(n in 0..16){
       if(n < N) OutputFreq[n] = Output_MHz[n];
       else      OutputFreq[n] = 0;
     }
@@ -85,7 +85,7 @@ class PLL_CycloneV(net Clk, net Reset, Output_MHz){
     net Locked = PLL.locked;
     net Output[N];
 
-    for(n = 0; n < N; n++){
+    for(n in 0..N-1){
       Output[n]'frequency = Output_MHz * 1e6;
       Output[n] = PLL.outclk[n];
     }

@@ -26,9 +26,9 @@ def Alcha(f):
         Buffer = Dos2Unix(File.read())
 
     # Comments
-    Buffer = re.sub(b'//.*\n'        , b'', Buffer)
-    Buffer = re.sub(b'!!.*\n'        , b'', Buffer)
-    Buffer = re.sub(b'/\*(.|\n)*?\*/', b'', Buffer)
+    Buffer = re.sub(rb'//.*\n'        , b'', Buffer)
+    Buffer = re.sub(rb'!!.*\n'        , b'', Buffer)
+    Buffer = re.sub(rb'/\*(.|\n)*?\*/', b'', Buffer)
 
     # Strings
     Buffer = re.sub(b'".*?"', b'', Buffer)
@@ -38,8 +38,19 @@ def Alcha(f):
     n = 0
     while(o != n):
         o = len(Buffer)
-        Buffer = re.sub(b'\([^(]*?\)', b'', Buffer)
-        Buffer = re.sub(b'\[[^[]*?\]', b'', Buffer)
+        # Remove matched round brackets that are not concatenations,
+        # but keep the contents so that they are still counted as lines
+        Buffer = re.sub(rb'([^:])\(([^(]*?)\)', rb'\1\2', Buffer)
+        # Remove matched square brackets, including the contents
+        Buffer = re.sub(rb'\[[^[]*?\]'      , rb''  , Buffer)
+        n = len(Buffer)
+
+    # Concatenations
+    o = 1
+    n = 0
+    while(o != n):
+        o = len(Buffer)
+        Buffer = re.sub(rb':\([^(]*?\)', rb'', Buffer)
         n = len(Buffer)
 
     # Empty lines
@@ -54,8 +65,8 @@ def Verilog(f):
         Buffer = Dos2Unix(File.read())
 
     # Comments
-    Buffer = re.sub(b'//.*\n'        , b'', Buffer)
-    Buffer = re.sub(b'/\*(.|\n)*?\*/', b'', Buffer)
+    Buffer = re.sub(rb'//.*\n'        , b'', Buffer)
+    Buffer = re.sub(rb'/\*(.|\n)*?\*/', b'', Buffer)
 
     # Strings
     Buffer = re.sub(b'".*?"', b'', Buffer)
@@ -65,7 +76,7 @@ def Verilog(f):
     n = 0
     while(o != n):
         o = len(Buffer)
-        Buffer = re.sub(b'(?<!struct)\\s*\{[^{]*?\}', b'', Buffer)
+        Buffer = re.sub(rb'(?<!struct)\s*\{[^{]*?\}', b'', Buffer)
         n = len(Buffer)
 
     # Empty lines
@@ -91,7 +102,7 @@ def Script(f):
     # Escaped newlines
     Buffer = re.sub(b'\\\\\n', b'', Buffer)
 
-    # Count colon and newline characters
+    # Count semicolon and newline characters
     return len(re.sub(rb';|\n', b';', Buffer).split(b';')) - 1
 #-------------------------------------------------------------------------------
 

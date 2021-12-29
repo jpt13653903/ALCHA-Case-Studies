@@ -8,7 +8,7 @@ module DelayedReset #(
 );
 //------------------------------------------------------------------------------
 
-localparam Delay_cycles = Clk_Frequency * Delay_ms / 1000;
+localparam Delay_cycles = (Clk_Frequency / 1000) * Delay_ms;
 localparam N            = $clog2(Delay_cycles + 1);
 
 reg        Reset;

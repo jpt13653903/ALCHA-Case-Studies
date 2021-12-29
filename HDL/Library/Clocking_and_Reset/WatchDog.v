@@ -11,7 +11,7 @@ module WhatchDog #(
 );
 //------------------------------------------------------------------------------
 
-localparam Timeout_Cycles = Clk_Frequency * Timeout_ms / 1000;
+localparam Timeout_Cycles = (Clk_Frequency / 1000) * Timeout_ms;
 localparam N = $clog2(Timeout_Cycles);
 
 reg        Reset;

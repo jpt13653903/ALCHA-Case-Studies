@@ -22,7 +22,7 @@ module I2C #(
 //------------------------------------------------------------------------------
 
 localparam Baud_Cycles = Clk_Frequency / (Baud_kHz * 3);
-localparam Baud_N      = clog2(Baud_Cycles);
+localparam Baud_N      = $clog2(Baud_Cycles);
 
 reg [Baud_N-1:0]Baud_Count;
 

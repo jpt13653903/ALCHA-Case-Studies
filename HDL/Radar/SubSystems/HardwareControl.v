@@ -37,9 +37,17 @@ MutEx #(2) I2C_MutEx(
 );
 //------------------------------------------------------------------------------
 
-LTC2991 #(16'h2000) TxBIM(
+LTC2991 #(
+  .Clk_Frequency(2_500_000  ),
+  .Baud_kHz     (   50      ),
+  .Channel0     (Voltage    ),
+  .Channel1     (Voltage    ),
+  .Channel2     (Voltage    ),
+  .Channel3     (Temperature)
+)TxBIM(
   .ipClk       (ipClk  ),
   .ipReset     (ipReset),
+  .ipQuiet     (0),
 
   .opRequest   (I2C_TxBIM.Request),
   .ipGrant     (I2C_TxBIM.Grant  ),
@@ -56,9 +64,17 @@ LTC2991 #(16'h2000) TxBIM(
 );
 //------------------------------------------------------------------------------
 
-LTC2991 #(16'h2010) RxBIM(
+LTC2991 #(
+  .Clk_Frequency(2_500_000   ),
+  .Baud_kHz     (   50       ),
+  .Channel0     (Voltage     ),
+  .Channel1     (Differential),
+  .Channel2     (Voltage     ),
+  .Channel3     (Temperature )
+)RxBIM(
   .ipClk       (ipClk  ),
   .ipReset     (ipReset),
+  .ipQuiet     (0),
 
   .opRequest   (I2C_RxBIM.Request),
   .ipGrant     (I2C_RxBIM.Grant  ),

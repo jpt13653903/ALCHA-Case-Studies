@@ -18,8 +18,8 @@ assign opVersion[31:16] = Major;
 assign opVersion[15: 0] = Minor;
 
 assign opDate    = 32'h_2021_12_29;
-assign opTime    = 24'h_18_27_53;
-assign opGitHash = 32'h_1a62dd43;
+assign opTime    = 24'h_21_28_42;
+assign opGitHash = 32'h_2ece0900;
 //------------------------------------------------------------------------------
 
 endmodule
