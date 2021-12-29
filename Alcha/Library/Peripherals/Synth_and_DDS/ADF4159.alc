@@ -199,7 +199,7 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
                      PhaseValue,
                      1@3);
 
-    net(32) R2   = :(0@3
+    net(32) R2   = :(0@3,
                      CSR_Enable,
                      CP_CurrentSetting,
                      0@1,

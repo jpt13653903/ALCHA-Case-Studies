@@ -6,20 +6,24 @@ def Help():
     print("")
     print("Line-of-Code Counter")
     print("")
-    print("Usage: py locCounter File.ext ...")
+    print("Usage: py LoC_Counter.py File.ext ...")
     print("")
-    print("Supported extensions are: 'alc', 'v', 'qsf', 'sdc' and 'tcl'")
+    print("Supported extensions are:")
+    print("  'alc', 'v', 'vh', 'qsf', 'sdc', 'tcl' and 'py'")
     print("")
     exit()
 #-------------------------------------------------------------------------------
 
-def Alcha(f):
-    with open(f, 'rb') as File:
-        Buffer = File.read()
-
-    # DOS and MAC to Unix
+def Dos2Unix(Buffer):
     Buffer = re.sub(b'\r\n', b'\n', Buffer)
     Buffer = re.sub(b'\n\r', b'\n', Buffer)
+    Buffer = re.sub(b'\r'  , b'\n', Buffer)
+    return Buffer;
+#-------------------------------------------------------------------------------
+
+def Alcha(f):
+    with open(f, 'rb') as File:
+        Buffer = Dos2Unix(File.read())
 
     # Comments
     Buffer = re.sub(b'//.*\n'        , b'', Buffer)
@@ -39,7 +43,7 @@ def Alcha(f):
         n = len(Buffer)
 
     # Empty lines
-    Buffer = re.sub(b'(?m)^ *\n', b'', Buffer)
+    Buffer = re.sub(b'(?m)^\\s*\n', b'', Buffer)
 
     # Count semicolons, commas and opening braces
     return len(re.sub(b'[;,{]', b';', Buffer).split(b';')) - 1
@@ -47,11 +51,7 @@ def Alcha(f):
 
 def Verilog(f):
     with open(f, 'rb') as File:
-        Buffer = File.read()
-
-    # DOS and MAC to Unix
-    Buffer = re.sub(b'\r\n', b'\n', Buffer)
-    Buffer = re.sub(b'\n\r', b'\n', Buffer)
+        Buffer = Dos2Unix(File.read())
 
     # Comments
     Buffer = re.sub(b'//.*\n'        , b'', Buffer)
@@ -65,33 +65,34 @@ def Verilog(f):
     n = 0
     while(o != n):
         o = len(Buffer)
-        Buffer = re.sub(b'(?<!struct) *\{[^{]*?\}', b'', Buffer)
+        Buffer = re.sub(b'(?<!struct)\\s*\{[^{]*?\}', b'', Buffer)
         n = len(Buffer)
 
     # Empty lines
-    Buffer = re.sub(b'(?m)^ *\n', b'', Buffer)
+    Buffer = re.sub(b'(?m)^\\s*\n', b'', Buffer)
 
     # Count semicolons, commas, "begin" and "case" keywords
     return len(re.sub(rb';|,|(\bbegin\b)|(\bcase\b)', b';', Buffer).split(b';')) - 1
 #-------------------------------------------------------------------------------
 
-def TCL(f):
+def Script(f):
     with open(f, 'rb') as File:
-        Buffer = File.read()
+        Buffer = Dos2Unix(File.read())
 
-    # DOS and MAC to Unix
-    Buffer = re.sub(b'\r\n', b'\n', Buffer)
-    Buffer = re.sub(b'\n\r', b'\n', Buffer)
+    # Strings
+    Buffer = re.sub(b'".*?"', b'', Buffer)
+    Buffer = re.sub(b"'.*?'", b'', Buffer)
 
     # Comments and empty lines
-    Buffer = re.sub(b'(?m)^ *#.*\n' , b''  , Buffer)
-    Buffer = re.sub(b'(?m)^ *\n', b'', Buffer)
+    Buffer = re.sub(b'#.*\n'         , b'', Buffer)
+    Buffer = re.sub(b'"""(.|\n)*?"""', b'', Buffer)
+    Buffer = re.sub(b'(?m)^\\s*\n'   , b'', Buffer)
 
     # Escaped newlines
     Buffer = re.sub(b'\\\\\n', b'', Buffer)
 
-    # Count lines
-    return len(Buffer.split(b'\n')) - 1
+    # Count colon and newline characters
+    return len(re.sub(rb';|\n', b';', Buffer).split(b';')) - 1
 #-------------------------------------------------------------------------------
 
 if(len(sys.argv) < 2):
@@ -106,9 +107,11 @@ for f in sys.argv[1:]:
     match Ext:
         case 'alc': Count = Alcha(f)
         case 'v'  : Count = Verilog(f)
-        case 'qsf': Count = TCL(f)
-        case 'sdc': Count = TCL(f)
-        case 'tcl': Count = TCL(f)
+        case 'vh' : Count = Verilog(f)
+        case 'qsf': Count = Script(f)
+        case 'sdc': Count = Script(f)
+        case 'tcl': Count = Script(f)
+        case 'py' : Count = Script(f)
         case _    : Help()
 
     print(f'{f}'.ljust(50) + f'{Count}'.rjust(5))

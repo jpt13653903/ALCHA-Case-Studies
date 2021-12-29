@@ -1,6 +1,6 @@
 class WhatchDog(net Clk, net Kick, num Timeout_ms, bool EdgeSensitive = false){
   private{
-    num Timeout_cycles = round(Clk'frequency * (Timeout_ms*1e-3));
+    num Timeout_Cycles = round(Clk'frequency * (Timeout_ms*1e-3));
     num N = ceil(log2(Delay_cycles));
 
     net(N) Count = Timeout_Cycles-1;
@@ -16,8 +16,8 @@ class WhatchDog(net Clk, net Kick, num Timeout_ms, bool EdgeSensitive = false){
   output net Error = 0;
 
   rtl(Clk, Reset){
-    if(Counter) Counter--;
-    else        Error = 1;
+    if(Count) Count--;
+    else      Error = 1;
   }
 }
 //------------------------------------------------------------------------------

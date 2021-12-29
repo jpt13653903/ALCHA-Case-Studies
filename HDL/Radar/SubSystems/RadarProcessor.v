@@ -41,31 +41,52 @@ module RadarProcessor(
 
 PACKET FIFO_Output;
 
-FIFO #(8192) Queue(
-  .ipClk     (ipClk  ),
-  .ipReset   (ipReset),
+FIFO #(14, 8192) Queue(
+  .ipClk         (ipClk  ),
+  .ipReset       (ipReset),
 
-  .opNumItems(opRdRegisters.Queue_NumItems),
+  .opNumItems    (opRdRegisters.Queue_NumItems),
 
-  .ipInput   (ipPacket),
+  .ipInput_SoP   (ipPacket.SoP  ),
+  .ipInput_EoP   (ipPacket.EoP  ),
+  .ipInput_Data  (ipPacket.Data ),
+  .ipInput_Valid (ipPacket.Valid),
 
-  .opOutput  (FIFO_Output),
-  .ipReady   (RangeWindow_Ready)
+  .opOutput_SoP  (FIFO_Output.SoP  ),
+  .opOutput_EoP  (FIFO_Output.EoP  ),
+  .opOutput_Data (FIFO_Output.Data ),
+  .opOutput_Valid(FIFO_Output.Valid),
+  .ipOutput_Ready(RangeWindow_Ready)
 );
 //------------------------------------------------------------------------------
 
 DATA_PACKET RangeWindow_Output;
 wire        RangeWindow_Ready;
 
-RealWindow RangeWindow(
-  .ipClk   (ipClk  ),
-  .ipReset (ipReset),
+Window #(
+  .InWidth     (  14             ),
+  .OutWidth    (  32             ),
+  .Length      (2500             ),
+  .Complex     (0                ),
+  .DeviceFamily("Cyclone V"      ),
+  .RamBlockType("M10K"           ),
+  .MIF_File    ("RangeWindow.mif")
 
-  .ipInput (FIFO_Output      ),
-  .opReady (RangeWindow_Ready),
+)RangeWindow(
+  .ipClk         (ipClk  ),
+  .ipReset       (ipReset),
 
-  .opOutput(RangeWindow_Output),
-  .ipReady (RangeFFT_Ready    )
+  .ipInput_SoP   (FIFO_Output.SoP  ),
+  .ipInput_EoP   (FIFO_Output.EoP  ),
+  .ipInput_I     (FIFO_Output.Data ),
+  .ipInput_Valid (FIFO_Output.Valid),
+  .opInput_Ready (RangeWindow_Ready),
+
+  .opOutput_SoP  (RangeWindow_Output.SoP  ),
+  .opOutput_EoP  (RangeWindow_Output.EoP  ),
+  .opOutput_I    (RangeWindow_Output.Data ),
+  .opOutput_Valid(RangeWindow_Output.Valid),
+  .ipOutput_Ready(RangeFFT_Ready          )
 );
 //------------------------------------------------------------------------------
 
@@ -126,15 +147,32 @@ Transpose CornerTurn(
 IQ_PACKET DopplerWindow_Output;
 wire      DopplerWindow_Ready;
 
-IQ_Window DopplerWindow(
-  .ipClk   (ipClk  ),
-  .ipReset (ipReset),
+Window #(
+  .InWidth     ( 32                ),
+  .OutWidth    ( 32                ),
+  .Length      (128                ),
+  .Complex     (1                  ),
+  .DeviceFamily("Cyclone V"        ),
+  .RamBlockType("M10K"             ),
+  .MIF_File    ("DopplerWindow.mif")
 
-  .ipInput (CornerTurn_Output  ),
-  .opReady (DopplerWindow_Ready),
+)DopplerWindow(
+  .ipClk         (ipClk  ),
+  .ipReset       (ipReset),
 
-  .opOutput(DopplerWindow_Output),
-  .ipReady (DopplerFFT_Ready    )
+  .ipInput_SoP   (CornerTurn_Output.SoP  ),
+  .ipInput_EoP   (CornerTurn_Output.EoP  ),
+  .ipInput_I     (CornerTurn_Output.I    ),
+  .ipInput_Q     (CornerTurn_Output.Q    ),
+  .ipInput_Valid (CornerTurn_Output.Valid),
+  .opInput_Ready (DopplerWindow_Ready    ),
+
+  .opOutput_SoP  (DopplerWindow_Output.SoP  ),
+  .opOutput_EoP  (DopplerWindow_Output.EoP  ),
+  .opOutput_I    (DopplerWindow_Output.I    ),
+  .opOutput_Q    (DopplerWindow_Output.Q    ),
+  .opOutput_Valid(DopplerWindow_Output.Valid),
+  .ipOutput_Ready(DopplerFFT_Ready          )
 );
 //------------------------------------------------------------------------------
 

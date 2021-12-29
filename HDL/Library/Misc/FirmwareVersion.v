@@ -17,9 +17,9 @@ module FirmwareVersion #(
 assign opVersion[31:16] = Major;
 assign opVersion[15: 0] = Minor;
 
-assign opDate    = 32'h_2021_12_28;
-assign opTime    = 24'h_22_18_44;
-assign opGitHash = 32'h_007f3a7e;
+assign opDate    = 32'h_2021_12_29;
+assign opTime    = 24'h_18_27_53;
+assign opGitHash = 32'h_1a62dd43;
 //------------------------------------------------------------------------------
 
 endmodule

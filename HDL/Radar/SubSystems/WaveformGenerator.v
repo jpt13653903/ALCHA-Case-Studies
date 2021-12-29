@@ -30,7 +30,10 @@ TriggerDelay SynthTrigger(
 );
 //------------------------------------------------------------------------------
 
-ADF4159 SynthInst(
+ADF4159 #(
+  .Clk_Frequency(2_500_000),
+  .Baud_kHz     (    1_000)
+)SynthInst(
   .ipClk              (ipClk  ),
   .ipReset            (ipReset),
 

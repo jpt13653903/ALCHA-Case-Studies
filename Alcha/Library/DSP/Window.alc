@@ -33,7 +33,7 @@ class Window(net Clk, net Reset, num Length, string Function){
     while(Fullscale > Max) Fullscale /= 2;
     while(Fullscale < Max) Fullscale *= 2;
 
-    ROM.Initial = round(ROM.Initial * (1p18 / Fullscale));
+    ROM.Initial = round(ROM.Initial * ((1p18-1) / Fullscale));
     net(Width, Fullscale) Coefficient := ROM.Data_A;
   }
   //----------------------------------------------------------------------------

@@ -11,7 +11,6 @@ echo ""
 
 Files="        main.alc"
 Files=" $Files Platform/Platform.alc"
-Files=" $Files SubSystems/SystemController.alc"
 Files=" $Files Library/Platforms/DE0-Nano-SoC.alc"
 Files=" $Files SubSystems/MasterTrigger.alc"
 
@@ -41,19 +40,39 @@ echo ""
 echo ""
 #-------------------------------------------------------------------------------
 
+echo "Alcha: DSP Modules"
+echo ""
+
+Files="        Library/Memory/DualPortROM.alc"
+Files=" $Files Library/Memory/DualPortRAM.alc"
+Files=" $Files Library/Memory/FullDualPortRAM.alc"
+
+Files=" $Files Library/DSP/FIFO.alc"
+Files=" $Files Library/DSP/Window.alc"
+Files=" $Files Library/DSP/FFT.alc"
+Files=" $Files Library/DSP/Transpose.alc"
+Files=" $Files Library/DSP/AlphaFilter.alc"
+
+py ../Python/LoC\ Counter/LoC_Counter.py $Files
+echo ""
+echo ""
+#-------------------------------------------------------------------------------
+
 echo "Alcha: Other Subsystems"
 echo ""
 
-Files="        Library/Interfaces/RegistersDecoder.alc"
+Files="        SubSystems/SystemController.alc"
+
+Files=" $Files Library/Interfaces/RegistersDecoder.alc"
 
 Files=" $Files Library/Misc/FirmwareVersion.alc"
 
 Files=" $Files SubSystems/HardwareControl.alc"
 Files=" $Files SubSystems/WaveformGenerator.alc"
+Files=" $Files Library/DSP/Streams.alc"
 Files=" $Files SubSystems/ReceiverAbstraction.alc"
 Files=" $Files SubSystems/DebugStreamer.alc"
 Files=" $Files SubSystems/RadarProcessor.alc"
-Files=" $Files Library/DSP/Streams.alc"
 
 py ../Python/LoC\ Counter/LoC_Counter.py $Files
 echo ""

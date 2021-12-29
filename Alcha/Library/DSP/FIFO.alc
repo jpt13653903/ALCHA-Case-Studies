@@ -5,7 +5,7 @@ class FIFO(net Clk, net Reset, num Length){
   DataStream Run(Input){
     num Width = Input.Data'width;
 
-    DualPortRAM(Clk, Reset, Width+3, Length) RAM;
+    DualPortRAM(Clk, Reset, Width+2, Length) RAM;
 
     // Create new stream instance for the output
     result = DataStream(Width, -1);

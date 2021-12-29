@@ -6,13 +6,13 @@ module WhatchDog #(
   input      ipClk,
   input      ipReset,
 
-  input      ipKick
+  input      ipKick,
   output reg opError
 );
 //------------------------------------------------------------------------------
 
-localparam Timeout_cycles = Clk_Frequency * Timeout_ms / 1000;
-localparam N = clog2(Delay_cycles);
+localparam Timeout_Cycles = Clk_Frequency * Timeout_ms / 1000;
+localparam N = $clog2(Timeout_Cycles);
 
 reg        Reset;
 reg [N-1:0]Count;
@@ -28,8 +28,8 @@ always @(posedge ipClk) begin
     opError <= 0;
 
   end else begin
-    if(|Counter) Counter <= Counter - 1;
-    else         opError <= 1;
+    if(|Count) Count <= Count - 1;
+    else       opError <= 1;
   end
 end
 //------------------------------------------------------------------------------
