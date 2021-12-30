@@ -4,7 +4,7 @@ import "Library/Interfaces/AvalonSlave";
 
 class SystemController_Class{
   private{ // SoC System Instance
-    hdl("../Verilog/SoC_System/SoC_System.qsys") SoC_System_HDL(){
+    hdl("../HDL/SoC_System/SoC_System.qsys") SoC_System_HDL(){
       output net      hps_clk_out_clk;
       output net      hps_reset_out_reset;
 
