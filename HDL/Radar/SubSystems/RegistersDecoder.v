@@ -36,9 +36,11 @@ typedef struct{
 
 typedef struct{
   TRIGGERDELAY_WR_REGISTERS SynthTrigger;
-  logic [3:0]CP_CurrentSetting;
-  logic      RampOn;
-  logic      Update;
+  logic [ 3:0]CP_CurrentSetting;
+  logic       RampOn;
+  logic       Update;
+  logic [11:0]Integer;
+  logic [24:0]Fraction;
 } WAVEFORM_WR_REGISTERS;
 
 typedef struct{
@@ -158,6 +160,8 @@ always @(posedge ipClk) begin
     12'h061: opReadData <= opWrRegisters.Waveform.RampOn;
     12'h062: opReadData <= opWrRegisters.Waveform.Update;
     12'h063: opReadData <= ipRdRegisters.Waveform.Busy;
+    12'h064: opReadData <= opWrRegisters.Waveform.Integer;
+    12'h065: opReadData <= opWrRegisters.Waveform.Fraction;
 
     12'h070: opReadData <= opWrRegisters.Receiver.PacketTrigger.Enable;
     12'h071: opReadData <= opWrRegisters.Receiver.PacketTrigger.Delay;
@@ -188,6 +192,8 @@ always @(posedge ipClk) begin
     opWrRegisters.Waveform.CP_CurrentSetting    <= 7;
     opWrRegisters.Waveform.RampOn               <= 0;
     opWrRegisters.Waveform.Update               <= 0;
+    opWrRegisters.Waveform.Integer              <= 47; // 9.5 GHz
+    opWrRegisters.Waveform.Fraction             <= 25'h_100_0000;
 
     opWrRegisters.Receiver.PacketTrigger.Enable <= 0;
     opWrRegisters.Receiver.PacketTrigger.Delay  <= 0;
@@ -210,6 +216,8 @@ always @(posedge ipClk) begin
     12'h060: opWrRegisters.Waveform.CP_CurrentSetting    <= ipWriteData;
     12'h061: opWrRegisters.Waveform.RampOn               <= ipWriteData;
     12'h062: opWrRegisters.Waveform.Update               <= ipWriteData;
+    12'h064: opWrRegisters.Waveform.Integer              <= ipWriteData;
+    12'h065: opWrRegisters.Waveform.Fraction             <= ipWriteData;
 
     12'h070: opWrRegisters.Receiver.PacketTrigger.Enable <= ipWriteData;
     12'h071: opWrRegisters.Receiver.PacketTrigger.Delay  <= ipWriteData;

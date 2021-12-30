@@ -40,8 +40,8 @@ ADF4159 #(
   .ipCP_CurrentSetting(ipWrRegisters.CP_CurrentSetting),
   .ipRampOn           (ipWrRegisters.RampOn           ),
 
-  .ipInteger          (47           ), // 9.5 GHz
-  .ipFraction         (25'h_100_0000),
+  .ipInteger          (ipWrRegisters.Integer ),
+  .ipFraction         (ipWrRegisters.Fraction),
 
   .ipDeviationWord_0  ( 1007), // 150 MHz in 1 ms
   .ipDeviationOffset_0(    0),

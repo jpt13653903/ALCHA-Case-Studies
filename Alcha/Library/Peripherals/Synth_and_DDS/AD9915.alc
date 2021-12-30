@@ -1,0 +1,162 @@
+class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
+  public{ // Registers
+    input  net(32) ipFreqLowerLimit = 0;
+    input  net(32) ipFreqUpperLimit = 0;
+    input  net(32) ipStepUp         = 0;
+    input  net(32) ipStepDown       = 0;
+    input  net(16) ipSlopeUp        = 0;
+    input  net(16) ipSlopeDown      = 0;
+
+    // Control interface
+    input  net     ipUpdate  = 0;
+    output net     opBusy    = 1;
+    input  net     ipTrigger = 0;
+  }
+  //----------------------------------------------------------------------------
+
+  private{ // Change detection copies
+    net(32) FreqLowerLimit = ~ipFreqLowerLimit;
+    net(32) FreqUpperLimit = ~ipFreqUpperLimit;
+    net(32) StepUp         = ~ipStepUp;
+    net(32) StepDown       = ~ipStepDown;
+    net(16) SlopeUp        = ~ipSlopeUp;
+    net(16) SlopeDown      = ~ipSlopeDown;
+  }
+  //----------------------------------------------------------------------------
+
+  private{ // Local nets of the device pins
+    net opSClk       = 0;
+    net opnCS        = 0;
+    net opSDIO       = 0;
+    net opSyncIO     = 0;
+    net opIO_Update  = 0;
+
+    net opDR_Control = 0;
+    net opDR_Hold    = 0;
+    net ipDR_Over    = 1;
+  }
+
+  void ConnectSPI(pin SClk, pin nCS, pin SDIO, pin SyncIO, pin IO_Update){
+    SClk      = opSClk;
+    nCS       = opnCS;
+    SDIO      = opSDIO;
+    SyncIO    = opSyncIO;
+    IO_Update = opIO_Update;
+
+    !! Assign the device-specific timing parameters
+  }
+
+  void ConnectDR(pin Control, pin Hold, pin Over){
+    Control   = opDR_Control;
+    Hold      = opDR_Hold;
+    ipDR_Over = Over;
+
+    !! Assign the device-specific timing parameters
+  }
+  //----------------------------------------------------------------------------
+
+  private net RegsChanged;
+
+  private void Send_SPI(net(8) Address, net(32) Value){
+    net(40) Data;
+    opSDIO = Data[39];
+
+    fsm{
+      RegsChanged = true,
+      Data        = :(Address, Value),
+      opSyncIO    = 1;
+      opSyncIO    = 0;
+
+      loop(40){
+        opSClk = 1;
+        opSClk = 0, Data <<= 1;
+      }
+    }
+  }
+  //----------------------------------------------------------------------------
+
+  private void Init(){
+    fsm{
+      Send_SPI(0x00, 0x0001_000A); // Soft reset
+      Send_SPI(0x01, 0x0008_2900); // Enable DRG Over output and digital ramp
+
+      Send_SPI(0x03, 0x0105_2120); // DAC Calibrate
+      opIO_Update = 1;
+      opIO_Update = 0, loop(1p15);
+
+      Send_SPI(0x03, 0x0005_2120); // Clear DAC Calibrate
+    }
+  }
+  //----------------------------------------------------------------------------
+
+  private void UpdateRegisters(){
+    fsm{
+      if(ipFreqLowerLimit != FreqLowerLimit){
+        FreqLowerLimit = ipFreqLowerLimit;
+        Send_SPI(0x04, ipFreqLowerLimit);
+      }else;
+
+      if(ipFreqUpperLimit != FreqUpperLimit){
+        FreqUpperLimit = ipFreqUpperLimit;
+        Send_SPI(0x05, ipFreqUpperLimit);
+      }else;
+
+      if(ipStepUp != StepUp){
+        StepUp = ipStepUp;
+        Send_SPI(0x06, ipStepUp);
+      }else;
+
+      if(ipStepDown != StepDown){
+        StepDown = ipStepDown;
+        Send_SPI(0x07, ipStepDown);
+      }else;
+
+      if((ipSlopeUp != SlopeUp) || (ipSlopeDown != SlopeDown)){
+        SlopeUp   = ipSlopeUp;
+        SlopeDown = ipSlopeDown;
+        Send_SPI(0x08, {ipSlopeDown, ipSlopeUp});
+      }else;
+
+      if(RegsChanged){
+        opIO_Update = 1;
+        opIO_Update = 0;
+      }else;
+    }
+  }
+  //----------------------------------------------------------------------------
+
+  fsm(Clk, Reset){
+    Init();
+    UpdateRegisters();
+
+    loop{
+      RegsChanged = false,
+      if(opBusy){
+        while(opBusy);
+        opBusy = 0;
+      }
+      while(~ipUpdate);
+      opBusy = 1;
+
+      UpdateRegisters();
+    }
+  }
+  //----------------------------------------------------------------------------
+
+  rtl(Clk, Reset){
+    Trigger = :(Trigger[0], ipTrigger);
+    DR_Over = :(DR_Over[0], ipDR_Over);
+    //------------------------------------------------------------------------
+
+    if(DR_Over == 0b01){
+      if(Trigger[0]) opDR_Control <= ~opDR_Control; // Continuous operation
+      else           opDR_Control <= 0;             // Return to idle
+
+    }else if((DR_Over[0] == 1) & (Trigger == 0b01)){
+      opDR_Control <= ~opDR_Control // Prevent dead-lock
+                    & ~opBusy;      // Ignore trigger when reg update busy
+    }
+  }
+}
+//------------------------------------------------------------------------------
+

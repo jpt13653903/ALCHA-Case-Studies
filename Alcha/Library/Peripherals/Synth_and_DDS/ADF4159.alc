@@ -1,5 +1,5 @@
 class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
-  public{ // Ports
+  public{ // Registers
     // Tuning parameters
     net(  4) CP_CurrentSetting = 7;
 
