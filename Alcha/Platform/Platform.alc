@@ -6,14 +6,17 @@ alias LEDs      = DE0.LEDs;
 alias DipSwitch = DE0.Switches;
 //------------------------------------------------------------------------------
 
-group Synth{ // ADF4159
+group Synth{ // AD9915
   group SPI{
-    alias SClk  = DE0.Arduino.IO[0];
-    alias Data  = DE0.Arduino.IO[1];
-    alias Latch = DE0.Arduino.IO[2];
+    alias SClk      = DE0.Arduino.IO[0];
+    alias nCS       = DE0.Arduino.IO[1];
+    alias SDIO      = DE0.Arduino.IO[2];
+    alias SyncIO    = DE0.Arduino.IO[3];
+    alias IO_Update = DE0.Arduino.IO[4];
   }
-  alias Trigger = DE0.Arduino.IO[3];
-  alias MuxOut  = DE0.Arduino.IO[4];
+  alias DR_Control = DE0.Arduino.IO[ 9];
+  alias DR_Hold    = DE0.Arduino.IO[10];
+  alias DR_Over    = DE0.Arduino.IO[11];
 }
 //------------------------------------------------------------------------------
 
@@ -37,10 +40,7 @@ group ADC{ // ADS7056
 alias TxEnable = DE0.Arduino.IO[8];
 //------------------------------------------------------------------------------
 
-net(5) Debug;
-DE0.Arduino.IO[ 9] = Debug[0];
-DE0.Arduino.IO[10] = Debug[1];
-DE0.Arduino.IO[11] = Debug[2];
+net(2) Debug;
 DE0.Arduino.IO[12] = Debug[3];
 DE0.Arduino.IO[13] = Debug[4];
 //------------------------------------------------------------------------------

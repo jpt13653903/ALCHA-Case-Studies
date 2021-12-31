@@ -6,11 +6,15 @@ module Radar(
 wire [3:0]DipSwitch = Switches;
 //------------------------------------------------------------------------------
 
-wire Synth_SPI_SClk ; assign Arduino_IO[0] = Synth_SPI_SClk;
-wire Synth_SPI_Data ; assign Arduino_IO[1] = Synth_SPI_Data;
-wire Synth_SPI_Latch; assign Arduino_IO[2] = Synth_SPI_Latch;
-wire Synth_Trigger  ; assign Arduino_IO[3] = Synth_Trigger;
-wire Synth_MuxOut   =        Arduino_IO[4];
+wire Synth_SPI_SClk     ; assign Arduino_IO[ 0] = Synth_SPI_SClk;
+wire Synth_SPI_nCS      ; assign Arduino_IO[ 1] = Synth_SPI_nCS;
+wire Synth_SPI_SDIO     ; assign Arduino_IO[ 2] = Synth_SPI_SDIO;
+wire Synth_SPI_SyncIO   ; assign Arduino_IO[ 3] = Synth_SPI_SyncIO;
+wire Synth_SPI_IO_Update; assign Arduino_IO[ 4] = Synth_SPI_IO_Update;
+
+wire Synth_DR_Control   ; assign Arduino_IO[ 9] = Synth_DR_Control;
+wire Synth_DR_Hold      ; assign Arduino_IO[10] = Synth_DR_Hold;
+wire Synth_DR_Over      =        Arduino_IO[11];
 //------------------------------------------------------------------------------
 
 wire ADC_nCS  ; assign Arduino_IO[5] = ADC_nCS;
@@ -21,7 +25,7 @@ wire ADC_Data =        Arduino_IO[7];
 wire TxEnable; assign Arduino_IO[8] = TxEnable;
 //------------------------------------------------------------------------------
 
-wire [4:0]Debug; assign Arduino_IO[13:9] = Debug;
+wire [1:0]Debug; assign Arduino_IO[13:12] = Debug;
 //------------------------------------------------------------------------------
 
 wire I2C_SClk_enable = ~Hardware_I2C_SClk;

@@ -74,11 +74,15 @@ WaveformGenerator Waveform(
 
   .ipMasterTrigger(MasterTrigger       ),
 
-  .opSPI_SClk     (Synth_SPI_SClk      ),
-  .opSPI_Data     (Synth_SPI_Data      ),
-  .opSPI_Latch    (Synth_SPI_Latch     ),
-  .opTrigger      (Synth_Trigger       ),
-  .ipMuxOut       (Synth_MuxOut        )
+  .opSClk         (Synth_SPI_SClk      ),
+  .opnCS          (Synth_SPI_nCS       ),
+  .opSDIO         (Synth_SPI_SDIO      ),
+  .opSyncIO       (Synth_SPI_SyncIO    ),
+  .opIO_Update    (Synth_SPI_IO_Update ),
+
+  .opDR_Control   (Synth_DR_Control    ),
+  .opDR_Hold      (Synth_DR_Hold       ),
+  .ipDR_Over      (Synth_DR_Over       )
 );
 //------------------------------------------------------------------------------
 

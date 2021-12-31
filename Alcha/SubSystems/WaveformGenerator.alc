@@ -1,5 +1,5 @@
 import "Library/Timing/TriggerDelay";
-import "Library/Peripherals/Synth_and_DDS/ADF4159";
+import "Library/Peripherals/Synth_and_DDS/AD9915";
 //------------------------------------------------------------------------------
 
 TriggerDelay(ControlClock, MasterReset, MasterTrigger) SynthTrigger;
@@ -9,33 +9,38 @@ Registers.Writeable(SynthTrigger.Delay );
 Registers.Writeable(SynthTrigger.Length);
 //------------------------------------------------------------------------------
 
-ADF4159(ControlClock, MasterReset) SynthInst;
+AD9915(ControlClock, MasterReset) SynthInst;
 
-Registers.Writeable(SynthInst.CP_CurrentSetting);
-Registers.Writeable(SynthInst.RampOn);
-Registers.Writeable(SynthInst.Update);
-Registers.ReadOnly (SynthInst.Busy);
+Registers.Writeable(SynthInst.ipUpdate);
+Registers.ReadOnly (SynthInst.opBusy);
 
-SynthInst.SetRefFreq(100e6, true);
-SynthInst.SetStart  (9.5e9);
-SynthInst.SetRamp   (150e6, 1e-3, 50e-6);
+// 9 GHz LO
+SynthInst.ipFreqLowerLimit = round(500e6 * (1p32/2.5e9));
+SynthInst.ipFreqUpperLimit = round(650e6 * (1p32/2.5e9));
 
-Registers.Writeable(SynthInst.Integer );
-Registers.Writeable(SynthInst.Fraction);
+// 150 MHz; 1 ms up; 50 μs down
+SynthInst.ipStepUp   = round(150e6 / ( 1e-3*2.5e9/24) * (1p32/2.5e9));
+SynthInst.ipStepDown = round(150e6 / (50e-6*2.5e9/24) * (1p32/2.5e9));
 
-Registers.Writeable(SynthInst.DeviationWord_0  );
-Registers.Writeable(SynthInst.DeviationOffset_0);
-Registers.Writeable(SynthInst.StepWord_0       );
-
-Registers.Writeable(SynthInst.DeviationWord_1  );
-Registers.Writeable(SynthInst.DeviationOffset_1);
-Registers.Writeable(SynthInst.StepWord_1       );
+Registers.Writeable(SynthInst.ipFreqLowerLimit);
+Registers.Writeable(SynthInst.ipFreqUpperLimit);
+Registers.Writeable(SynthInst.ipStepUp);
+Registers.Writeable(SynthInst.ipStepDown);
 
 SynthInst.Trigger = SynthTrigger.Output;
 
-SynthInst.ConnectPins(Synth.SPI.SClk,
-                      Synth.SPI.Data,
-                      Synth.SPI.Latch,
-                      Synth.Trigger);
+SynthInst.ConnectSPI(
+  SClk      = Synth.SPI.SClk,
+  nCS       = Synth.SPI.nCS,
+  SDIO      = Synth.SPI.SDIO,
+  SyncIO    = Synth.SPI.SyncIO,
+  IP_Update = Synth.SPI.IO_Update
+);
+
+SynthInst.ConnectDR(
+  Control = Synth.DR_Control,
+  Hold    = Synth.DR_Hold,
+  Over    = Synth.DR_Over
+);
 //------------------------------------------------------------------------------
 
