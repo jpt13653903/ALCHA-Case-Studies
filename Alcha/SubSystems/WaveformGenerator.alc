@@ -23,6 +23,14 @@ SynthInst.SetRamp   (150e6, 1e-3, 50e-6);
 Registers.Writeable(SynthInst.Integer );
 Registers.Writeable(SynthInst.Fraction);
 
+Registers.Writeable(SynthInst.DeviationWord_0  );
+Registers.Writeable(SynthInst.DeviationOffset_0);
+Registers.Writeable(SynthInst.StepWord_0       );
+
+Registers.Writeable(SynthInst.DeviationWord_1  );
+Registers.Writeable(SynthInst.DeviationOffset_1);
+Registers.Writeable(SynthInst.StepWord_1       );
+
 SynthInst.Trigger = SynthTrigger.Output;
 
 SynthInst.ConnectPins(Synth.SPI.SClk,

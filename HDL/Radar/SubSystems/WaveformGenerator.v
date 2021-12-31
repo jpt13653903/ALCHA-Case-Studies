@@ -43,13 +43,13 @@ ADF4159 #(
   .ipInteger          (ipWrRegisters.Integer ),
   .ipFraction         (ipWrRegisters.Fraction),
 
-  .ipDeviationWord_0  ( 1007), // 150 MHz in 1 ms
-  .ipDeviationOffset_0(    0),
-  .ipStepWord_0       (50000),
-
-  .ipDeviationWord_1  (20133), // 150 MHz in 50 μs
-  .ipDeviationOffset_1(    0),
-  .ipStepWord_1       ( 2500),
+  .ipDeviationWord_0  (ipWrRegisters.DeviationWord_0  ),
+  .ipDeviationOffset_0(ipWrRegisters.DeviationOffset_0),
+  .ipStepWord_0       (ipWrRegisters.StepWord_0       ),
+                                                      
+  .ipDeviationWord_1  (ipWrRegisters.DeviationWord_1  ),
+  .ipDeviationOffset_1(ipWrRegisters.DeviationOffset_1),
+  .ipStepWord_1       (ipWrRegisters.StepWord_1       ),
 
   .ipUseRefMul2       (    0),
   .ipRefCounter       (    1),

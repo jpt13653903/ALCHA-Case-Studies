@@ -41,6 +41,12 @@ typedef struct{
   logic       Update;
   logic [11:0]Integer;
   logic [24:0]Fraction;
+  logic [15:0]DeviationWord_0; // 150 MHz in 1 ms
+  logic [ 3:0]DeviationOffset_0;
+  logic [19:0]StepWord_0;
+  logic [15:0]DeviationWord_1; // 150 MHz in 50 μs
+  logic [ 3:0]DeviationOffset_1;
+  logic [19:0]StepWord_1;
 } WAVEFORM_WR_REGISTERS;
 
 typedef struct{
@@ -162,6 +168,12 @@ always @(posedge ipClk) begin
     12'h063: opReadData <= ipRdRegisters.Waveform.Busy;
     12'h064: opReadData <= opWrRegisters.Waveform.Integer;
     12'h065: opReadData <= opWrRegisters.Waveform.Fraction;
+    12'h066: opReadData <= opWrRegisters.Waveform.DeviationWord_0;
+    12'h067: opReadData <= opWrRegisters.Waveform.DeviationOffset_0;
+    12'h068: opReadData <= opWrRegisters.Waveform.StepWord_0;
+    12'h069: opReadData <= opWrRegisters.Waveform.DeviationWord_1;
+    12'h06A: opReadData <= opWrRegisters.Waveform.DeviationOffset_1;
+    12'h06B: opReadData <= opWrRegisters.Waveform.StepWord_1;
 
     12'h070: opReadData <= opWrRegisters.Receiver.PacketTrigger.Enable;
     12'h071: opReadData <= opWrRegisters.Receiver.PacketTrigger.Delay;
@@ -194,6 +206,12 @@ always @(posedge ipClk) begin
     opWrRegisters.Waveform.Update               <= 0;
     opWrRegisters.Waveform.Integer              <= 47; // 9.5 GHz
     opWrRegisters.Waveform.Fraction             <= 25'h_100_0000;
+    opWrRegisters.Waveform.DeviationWord_0      <=  1007; // 150 MHz in 1 ms
+    opWrRegisters.Waveform.DeviationOffset_0    <=     0;
+    opWrRegisters.Waveform.StepWord_0           <= 50000;
+    opWrRegisters.Waveform.DeviationWord_1      <= 20133; // 150 MHz in 50 μs
+    opWrRegisters.Waveform.DeviationOffset_1    <=     0;
+    opWrRegisters.Waveform.StepWord_1           <=  2500;
 
     opWrRegisters.Receiver.PacketTrigger.Enable <= 0;
     opWrRegisters.Receiver.PacketTrigger.Delay  <= 0;
@@ -218,6 +236,12 @@ always @(posedge ipClk) begin
     12'h062: opWrRegisters.Waveform.Update               <= ipWriteData;
     12'h064: opWrRegisters.Waveform.Integer              <= ipWriteData;
     12'h065: opWrRegisters.Waveform.Fraction             <= ipWriteData;
+    12'h066: opWrRegisters.Waveform.DeviationWord_0      <= ipWriteData;
+    12'h067: opWrRegisters.Waveform.DeviationOffset_0    <= ipWriteData;
+    12'h068: opWrRegisters.Waveform.StepWord_0           <= ipWriteData;
+    12'h069: opWrRegisters.Waveform.DeviationWord_1      <= ipWriteData;
+    12'h06A: opWrRegisters.Waveform.DeviationOffset_1    <= ipWriteData;
+    12'h06B: opWrRegisters.Waveform.StepWord_1           <= ipWriteData;
 
     12'h070: opWrRegisters.Receiver.PacketTrigger.Enable <= ipWriteData;
     12'h071: opWrRegisters.Receiver.PacketTrigger.Delay  <= ipWriteData;
