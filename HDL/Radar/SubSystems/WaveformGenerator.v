@@ -15,11 +15,11 @@ module WaveformGenerator(
 
   output opDR_Control,
   output opDR_Hold,
-  input  ipDR_Over
+  input  ipDR_Over,
+
+  output SynthTrigger_Output
 );
 //------------------------------------------------------------------------------
-
-wire SynthTrigger_Output;
 
 TriggerDelay SynthTrigger(
   .ipClk    (ipClk  ),

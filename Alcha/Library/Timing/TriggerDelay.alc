@@ -26,6 +26,7 @@ class TriggerDelay(net Clock, net Reset, net Trigger){
       LengthCount = Length;
     }
   }
+  AddDebug(Output);
 }
 //------------------------------------------------------------------------------
 

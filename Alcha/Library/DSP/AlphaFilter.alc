@@ -1,2 +1,7 @@
 !! To be implemented
 
+// AddDebug(Input.SoP);
+// AddDebug(Input.EoP);
+// AddDebug(Input.Valid);
+// AddDebug(result.Ready);
+

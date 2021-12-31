@@ -35,11 +35,28 @@ module RadarProcessor(
 
   output        opSDRAM_Read,
   input  [255:0]ipSDRAM_ReadData,
-  input         ipSDRAM_ReadValid
+  input         ipSDRAM_ReadValid,
+
+  output PACKET      FIFO_Output,
+
+  output DATA_PACKET RangeWindow_Output,
+  output             RangeWindow_Ready,
+
+  output IQ_PACKET   RangeFFT_Output,
+  output             RangeFFT_Ready,
+
+  output IQ_PACKET   CornerTurn_Output,
+  output             CornerTurn_Ready,
+
+  output IQ_PACKET   DopplerWindow_Output,
+  output             DopplerWindow_Ready,
+
+  output IQ_PACKET   DopplerFFT_Output,
+  output             DopplerFFT_Ready,
+
+  output             Filter_Ready
 );
 //------------------------------------------------------------------------------
-
-PACKET FIFO_Output;
 
 FIFO #(14, 8192) Queue(
   .ipClk         (ipClk  ),
@@ -59,9 +76,6 @@ FIFO #(14, 8192) Queue(
   .ipOutput_Ready(RangeWindow_Ready)
 );
 //------------------------------------------------------------------------------
-
-DATA_PACKET RangeWindow_Output;
-wire        RangeWindow_Ready;
 
 Window #(
   .InWidth     (  14             ),
@@ -90,9 +104,6 @@ Window #(
 );
 //------------------------------------------------------------------------------
 
-IQ_PACKET RangeFFT_Output;
-wire      RangeFFT_Ready;
-
 RealFFT RangeFFT(
   .ipClk   (ipClk  ),
   .ipReset (ipReset),
@@ -104,9 +115,6 @@ RealFFT RangeFFT(
   .ipReady (CornerTurn_Ready)
 );
 //------------------------------------------------------------------------------
-
-IQ_PACKET   CornerTurn_Output;
-wire        CornerTurn_Ready;
 
 wire        CornerTurn_WaitRequest;
 wire [ 26:0]CornerTurn_Address;
@@ -144,9 +152,6 @@ Transpose CornerTurn(
 );
 //------------------------------------------------------------------------------
 
-IQ_PACKET DopplerWindow_Output;
-wire      DopplerWindow_Ready;
-
 Window #(
   .InWidth     ( 32                ),
   .OutWidth    ( 32                ),
@@ -176,9 +181,6 @@ Window #(
 );
 //------------------------------------------------------------------------------
 
-IQ_PACKET DopplerFFT_Output;
-wire      DopplerFFT_Ready;
-
 FFT DopplerFFT(
   .ipClk   (ipClk  ),
   .ipReset (ipReset),
@@ -190,8 +192,6 @@ FFT DopplerFFT(
   .ipReady (Filter_Ready     )
 );
 //------------------------------------------------------------------------------
-
-wire        Filter_Ready;
 
 wire        Filter_WaitRequest;
 wire [ 26:0]Filter_Address;

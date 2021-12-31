@@ -13,6 +13,7 @@ class TriggerGen(net Clock, net Reset){
       Output = 0;
     }
   }
+  AddDebug(Ouptut);
 }
 //------------------------------------------------------------------------------
 

@@ -24,7 +24,9 @@ module ReceiverAbstraction(
 
   output [12:0]opDebug_Address,
   output [15:0]opDebug_WriteData,
-  output       opDebug_Write
+  output       opDebug_Write,
+
+  output PacketTrigger_Output
 );
 //------------------------------------------------------------------------------
 
@@ -43,8 +45,6 @@ ADS7056 ADC(
   .opValid(ADC_Valid)
 );
 //------------------------------------------------------------------------------
-
-wire PacketTrigger_Output;
 
 TriggerDelay PacketTrigger(
   .ipClk    (ipControlClk),

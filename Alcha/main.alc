@@ -1,3 +1,11 @@
+num DebugCounter = 0;
+void AddDebug(net Signal){
+  Debug[DebugCounter] = Signal;
+  print(:["Debug[", $(DebugCounter), "] <= ", Signal'full_instance_name, "\n"]);
+  DebugCounter++;
+}
+//------------------------------------------------------------------------------
+
 import "Platform/Platform";
 //------------------------------------------------------------------------------
 

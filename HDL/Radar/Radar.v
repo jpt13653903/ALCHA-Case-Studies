@@ -35,6 +35,7 @@ FirmwareVersion #(1, 0) Version(
 //------------------------------------------------------------------------------
 
 wire MasterTrigger;
+assign Debug[0] = MasterTrigger;
 
 TriggerGen MasterTriggerGen(
   .ipClk    (ControlClock                    ),
@@ -82,11 +83,16 @@ WaveformGenerator Waveform(
 
   .opDR_Control   (Synth_DR_Control    ),
   .opDR_Hold      (Synth_DR_Hold       ),
-  .ipDR_Over      (Synth_DR_Over       )
+  .ipDR_Over      (Synth_DR_Over       ),
+
+  .SynthTrigger_Output(Debug[1])
 );
 //------------------------------------------------------------------------------
 
 PACKET Receiver_Packet;
+assign Debug[3] = Receiver_Packet.SoP;
+assign Debug[4] = Receiver_Packet.EoP;
+assign Debug[5] = Receiver_Packet.Valid;
 
 ReceiverAbstraction Receiver(
   .ipDspClk         (DspClock              ),
@@ -106,9 +112,41 @@ ReceiverAbstraction Receiver(
 
   .opDebug_Address  (StreamBuffer_Address  ),
   .opDebug_WriteData(StreamBuffer_WriteData),
-  .opDebug_Write    (StreamBuffer_Write    )
+  .opDebug_Write    (StreamBuffer_Write    ),
+
+  .PacketTrigger_Output(Debug[2])
 );
 //------------------------------------------------------------------------------
+
+PACKET             FIFO_Output;
+assign Debug[ 6] = FIFO_Output.SoP;
+assign Debug[ 7] = FIFO_Output.EoP;
+assign Debug[ 8] = FIFO_Output.Valid;
+
+DATA_PACKET        RangeWindow_Output;
+assign Debug[10] = RangeWindow_Output.SoP;
+assign Debug[11] = RangeWindow_Output.EoP;
+assign Debug[12] = RangeWindow_Output.Valid;
+
+IQ_PACKET          RangeFFT_Output;
+assign Debug[14] = RangeFFT_Output.SoP;
+assign Debug[15] = RangeFFT_Output.EoP;
+assign Debug[16] = RangeFFT_Output.Valid;
+
+IQ_PACKET          CornerTurn_Output;
+assign Debug[18] = CornerTurn_Output.SoP;
+assign Debug[19] = CornerTurn_Output.EoP;
+assign Debug[20] = CornerTurn_Output.Valid;
+
+IQ_PACKET          DopplerWindow_Output;
+assign Debug[22] = DopplerWindow_Output.SoP;
+assign Debug[23] = DopplerWindow_Output.EoP;
+assign Debug[24] = DopplerWindow_Output.Valid;
+
+IQ_PACKET          DopplerFFT_Output;
+assign Debug[26] = DopplerFFT_Output.SoP;
+assign Debug[27] = DopplerFFT_Output.EoP;
+assign Debug[28] = DopplerFFT_Output.Valid;
 
 RadarProcessor Processor(
   .ipClk              (DspClock             ),
@@ -131,7 +169,25 @@ RadarProcessor Processor(
 
   .opSDRAM_Read       (SDRAM_Read           ),
   .ipSDRAM_ReadData   (SDRAM_ReadData       ),
-  .ipSDRAM_ReadValid  (SDRAM_ReadValid      )
+  .ipSDRAM_ReadValid  (SDRAM_ReadValid      ),
+
+  .FIFO_Output         (FIFO_Output),
+  .RangeWindow_Ready   (Debug[ 9]),
+
+  .RangeWindow_Output  (RangeWindow_Output),
+  .RangeFFT_Ready      (Debug[13]),
+
+  .RangeFFT_Output     (RangeFFT_Output),
+  .CornerTurn_Ready    (Debug[17]),
+
+  .CornerTurn_Output   (CornerTurn_Output),
+  .DopplerWindow_Ready (Debug[21]),
+
+  .DopplerWindow_Output(DopplerWindow_Output),
+  .DopplerFFT_Ready    (Debug[25]),
+
+  .DopplerFFT_Output   (DopplerFFT_Output),
+  .Filter_Ready        (Debug[29])
 );
 //------------------------------------------------------------------------------
 

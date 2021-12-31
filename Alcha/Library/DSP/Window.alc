@@ -79,11 +79,19 @@ class Window(net Clk, net Reset, num Length, string Function){
 //------------------------------------------------------------------------------
 
 DataStream operator| (DataStream Input, Window Instance){
+  AddDebug(Input.SoP);
+  AddDebug(Input.EoP);
+  AddDebug(Input.Valid);
+  AddDebug(result.Ready);
   return Instance.Run(Input, false);
 }
 //------------------------------------------------------------------------------
 
 IQ_Stream operator| (IQ_Stream Input, Window Instance){
+  AddDebug(Input.SoP);
+  AddDebug(Input.EoP);
+  AddDebug(Input.Valid);
+  AddDebug(result.Ready);
   return Instance.Run(Input, true);
 }
 //------------------------------------------------------------------------------

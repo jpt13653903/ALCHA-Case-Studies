@@ -45,11 +45,19 @@ class FFT(net Clk, net Reset, num NumPoints){
 //------------------------------------------------------------------------------
 
 DataStream operator| (DataStream Input, FFT Engine){
+  AddDebug(Input.SoP);
+  AddDebug(Input.EoP);
+  AddDebug(Input.Valid);
+  AddDebug(result.Ready);
   return Engine.Run(Input, false);
 }
 //------------------------------------------------------------------------------
 
 IQ_Stream operator| (IQ_Stream Input, FFT Engine){
+  AddDebug(Input.SoP);
+  AddDebug(Input.EoP);
+  AddDebug(Input.Valid);
+  AddDebug(result.Ready);
   return Engine.Run(Input, true);
 }
 //------------------------------------------------------------------------------

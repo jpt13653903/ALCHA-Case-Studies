@@ -40,6 +40,10 @@ class FIFO(net Clk, net Reset, num Length){
 //------------------------------------------------------------------------------
 
 DataStream operator| (Input, FIFO Queue){
+  AddDebug(Input.SoP);
+  AddDebug(Input.EoP);
+  AddDebug(Input.Valid);
+  AddDebug(result.Ready);
   return Queue.Run(Input);
 }
 //------------------------------------------------------------------------------

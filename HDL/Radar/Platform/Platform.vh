@@ -25,7 +25,7 @@ wire ADC_Data =        Arduino_IO[7];
 wire TxEnable; assign Arduino_IO[8] = TxEnable;
 //------------------------------------------------------------------------------
 
-wire [1:0]Debug; assign Arduino_IO[13:12] = Debug;
+wire [35:0]Debug; assign GPIO[0] = Debug;
 //------------------------------------------------------------------------------
 
 wire I2C_SClk_enable = ~Hardware_I2C_SClk;
