@@ -1,11 +1,11 @@
-class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
+class AD9915(net Clk, net Reset, num Baud_kHz = 1000){
   public{ // Registers
     input  net(32) ipFreqLowerLimit = 0;
     input  net(32) ipFreqUpperLimit = 0;
     input  net(32) ipStepUp         = 0;
     input  net(32) ipStepDown       = 0;
-    input  net(16) ipSlopeUp        = 0;
-    input  net(16) ipSlopeDown      = 0;
+    input  net(16) ipSlopeUp        = 1;
+    input  net(16) ipSlopeDown      = 1;
 
     // Control interface
     input  net     ipUpdate  = 0;
@@ -92,28 +92,28 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
   private void UpdateRegisters(){
     fsm{
       if(ipFreqLowerLimit != FreqLowerLimit){
-        FreqLowerLimit = ipFreqLowerLimit;
+        FreqLowerLimit = ipFreqLowerLimit,
         Send_SPI(0x04, ipFreqLowerLimit);
       }else;
 
       if(ipFreqUpperLimit != FreqUpperLimit){
-        FreqUpperLimit = ipFreqUpperLimit;
+        FreqUpperLimit = ipFreqUpperLimit,
         Send_SPI(0x05, ipFreqUpperLimit);
       }else;
 
       if(ipStepUp != StepUp){
-        StepUp = ipStepUp;
+        StepUp = ipStepUp,
         Send_SPI(0x06, ipStepUp);
       }else;
 
       if(ipStepDown != StepDown){
-        StepDown = ipStepDown;
+        StepDown = ipStepDown,
         Send_SPI(0x07, ipStepDown);
       }else;
 
       if((ipSlopeUp != SlopeUp) || (ipSlopeDown != SlopeDown)){
-        SlopeUp   = ipSlopeUp;
-        SlopeDown = ipSlopeDown;
+        SlopeUp   = ipSlopeUp,
+        SlopeDown = ipSlopeDown,
         Send_SPI(0x08, {ipSlopeDown, ipSlopeUp});
       }else;
 
@@ -132,7 +132,7 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
     loop{
       RegsChanged = false,
       if(opBusy){
-        while(opBusy);
+        while(ipUpdate);
         opBusy = 0;
       }
       while(~ipUpdate);
