@@ -45,9 +45,9 @@ LTC2991 #(
   .Channel2     (Voltage    ),
   .Channel3     (Temperature)
 )TxBIM(
-  .ipClk       (ipClk  ),
-  .ipReset     (ipReset),
-  .ipQuiet     (0),
+  .ipClk       (ipClk      ),
+  .ipReset     (ipReset    ),
+  .ipQuiet     (~opTxEnable),
 
   .opRequest   (I2C_TxBIM.Request),
   .ipGrant     (I2C_TxBIM.Grant  ),
@@ -72,9 +72,9 @@ LTC2991 #(
   .Channel2     (Voltage     ),
   .Channel3     (Temperature )
 )RxBIM(
-  .ipClk       (ipClk  ),
-  .ipReset     (ipReset),
-  .ipQuiet     (0),
+  .ipClk       (ipClk      ),
+  .ipReset     (ipReset    ),
+  .ipQuiet     (~opTxEnable),
 
   .opRequest   (I2C_RxBIM.Request),
   .ipGrant     (I2C_RxBIM.Grant  ),
