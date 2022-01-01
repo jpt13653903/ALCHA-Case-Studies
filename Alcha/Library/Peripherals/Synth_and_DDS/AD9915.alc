@@ -114,12 +114,13 @@ class AD9915(net Clk, net Reset, num Baud_kHz = 1000){
       if((ipSlopeUp != SlopeUp) || (ipSlopeDown != SlopeDown)){
         SlopeUp   = ipSlopeUp,
         SlopeDown = ipSlopeDown,
-        Send_SPI(0x08, {ipSlopeDown, ipSlopeUp});
+        Send_SPI(0x08, :(ipSlopeDown, ipSlopeUp));
       }else;
 
       if(RegsChanged){
         opIO_Update = 1;
-        opIO_Update = 0;
+        opIO_Update = 0,
+        RegsChanged = false;
       }else;
     }
   }
@@ -130,14 +131,13 @@ class AD9915(net Clk, net Reset, num Baud_kHz = 1000){
     UpdateRegisters();
 
     loop{
-      RegsChanged = false,
       if(opBusy){
         while(ipUpdate);
         opBusy = 0;
       }
       while(~ipUpdate);
-      opBusy = 1;
 
+      opBusy = 1,
       UpdateRegisters();
     }
   }
