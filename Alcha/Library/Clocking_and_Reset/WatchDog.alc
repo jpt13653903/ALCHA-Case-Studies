@@ -9,7 +9,7 @@ class WhatchDog(net Clk, net Kick, num Timeout_ms, bool EdgeSensitive = false){
       net(2) KickEdge;
       rtl(Clk) KickEdge = :(KickEdge[0], Kick);
       net Reset = (KickEdge == 0b01);
-    }else
+    }else{
       net Reset = Kick;
     }
   }
