@@ -4,8 +4,8 @@ import "Library/Interfaces/AvalonInterface";
 class AvalonMaster(net Clock, net Reset, num Width, num Depth): AvalonInterface(Width, Depth){
   'BaseAddress = 0;
   //----------------------------------------------------------------------------
-    
-  private
+
+  private{
     num Used                  = 0;
     net ReadingWaitRequest    = 0;
     net InterfacesWaitRequest = 0;

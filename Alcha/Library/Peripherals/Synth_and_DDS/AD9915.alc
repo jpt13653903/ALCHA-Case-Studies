@@ -111,7 +111,7 @@ class AD9915(net Clk, net Reset, num Baud_kHz = 1000){
         Send_SPI(0x07, ipStepDown);
       }else;
 
-      if((ipSlopeUp != SlopeUp) || (ipSlopeDown != SlopeDown)){
+      if((ipSlopeUp != SlopeUp) | (ipSlopeDown != SlopeDown)){
         SlopeUp   = ipSlopeUp,
         SlopeDown = ipSlopeDown,
         Send_SPI(0x08, :(ipSlopeDown, ipSlopeUp));
@@ -149,12 +149,12 @@ class AD9915(net Clk, net Reset, num Baud_kHz = 1000){
     //------------------------------------------------------------------------
 
     if(DR_Over == 0b01){
-      if(Trigger[0]) opDR_Control <= ~opDR_Control; // Continuous operation
-      else           opDR_Control <= 0;             // Return to idle
+      if(Trigger[0]) opDR_Control = ~opDR_Control; // Continuous operation
+      else           opDR_Control = 0;             // Return to idle
 
     }else if((DR_Over[0] == 1) & (Trigger == 0b01)){
-      opDR_Control <= ~opDR_Control // Prevent dead-lock
-                    & ~opBusy;      // Ignore trigger when reg update busy
+      opDR_Control = ~opDR_Control // Prevent dead-lock
+                   & ~opBusy;      // Ignore trigger when reg update busy
     }
   }
 }

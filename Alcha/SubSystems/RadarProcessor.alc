@@ -21,7 +21,7 @@ Registers.ReadOnly (Filter.WrAddress);
 //------------------------------------------------------------------------------
 
 // The Alpha Filter does not produce an output stream
-Receiver.Packet | Queue | RangeWindow | RangeFFT | CornerTurn
-                | DopplerWindow | DopplerFFT | Filter;
+DSP = Receiver.Packet | Queue | RangeWindow | RangeFFT
+    | CornerTurn | DopplerWindow | DopplerFFT | Filter;
 //------------------------------------------------------------------------------
 

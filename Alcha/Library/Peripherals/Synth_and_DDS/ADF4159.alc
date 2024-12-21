@@ -13,7 +13,7 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
     net(  4) DeviationOffset_0 = 0;
     net( 20) StepWord_0        = 0;
 
-    // Ramp down control 
+    // Ramp down control
     net(-15) DeviationWord_1   = 0;
     net(  4) DeviationOffset_1 = 0;
     net( 20) StepWord_1        = 0;
@@ -116,7 +116,7 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
 
   private void SetRamp(bool Up, num Bandwidth, num Time){
     assert(RefFreq > 0); // Check that SetRefFreq() was called first
-    
+
         Clk1Divider     = 1;
     num Clk2Divider     = 2;
     num StepWord        = 0;
@@ -177,7 +177,7 @@ class ADF4159(net Clk, net Reset, num Baud_kHz = 1000){
       PfdFreq  *= 2;
     }
     num RefDiv = 1;
-    while(RefDiv < 32 && PfdFreq > 110e6){
+    while(RefDiv < 32 & PfdFreq > 110e6){
       RefDiv++;
       PfdFreq /= 2;
     }
